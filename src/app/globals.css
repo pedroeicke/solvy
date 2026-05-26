@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+/* ============================================================
+   SOLVY — Design System (v3, nivel WebHub)
+   Preto puro + azul cinematografico. Molde Expanded usada DIREITO:
+   peso medio, tracking fechado, branco puro, SEM degrade.
+   Motion pesado: GSAP + ScrollTrigger + Lenis + Three.js.
+   ============================================================ */
+
+:root {
+  --solvy-bg: #030305;
+  --solvy-bg-2: #060709;
+  --solvy-line: rgba(255, 255, 255, 0.08);
+  --solvy-line-strong: rgba(255, 255, 255, 0.16);
+
+  --solvy-fg: #f7f9fc;
+  --solvy-muted: #8b93a3;
+  --solvy-faint: #4c5260;
+
+  --solvy-blue: #027ee2;
+  --solvy-blue-light: #00a7f4;
+  --solvy-blue-deep: #014f8f;
+  --solvy-glow: rgba(0, 167, 244, 0.55);
+}
+
+@theme inline {
+  --color-bg: var(--solvy-bg);
+  --color-bg-2: var(--solvy-bg-2);
+  --color-line: var(--solvy-line);
+  --color-line-strong: var(--solvy-line-strong);
+  --color-fg: var(--solvy-fg);
+  --color-muted: var(--solvy-muted);
+  --color-faint: var(--solvy-faint);
+  --color-blue: var(--solvy-blue);
+  --color-blue-light: var(--solvy-blue-light);
+  --color-blue-deep: var(--solvy-blue-deep);
+
+  /* Dual-font: Molde so em DISPLAY, TT Commons Pro (surrogate Onest) em corpo/UI */
+  --font-display: var(--font-molde);
+  --font-sans: var(--font-tt-commons);
+
+  /* Display gigante mas peso medio (estilo WebHub headline) */
+  --text-mega: clamp(2.75rem, 8vw, 8.5rem);
+  --text-giant: clamp(2.25rem, 5.5vw, 5.5rem);
+  --text-huge: clamp(1.75rem, 3.6vw, 3.25rem);
+  --text-lead: clamp(1.05rem, 1.4vw, 1.35rem);
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+html {
+  background: var(--solvy-bg);
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--solvy-bg);
+  color: var(--solvy-fg);
+  font-family: var(--font-tt-commons), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Molde DIREITO: display em peso medio, tracking fechado, branco.
+   .display / .display-tight FORCAM a familia Molde — usar em headlines/manifesto. */
+.display {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+.display-tight {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+}
+
+/* Ghost label tipo "06" / "PROBLEMA" — fica em Molde por ser cerimonial */
+.section-label-bg {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+/* Headline serif editorial (estilo Zouti / Stripe Sigma).
+   Peso medio, tracking levemente fechado, suporta italic. */
+.serif {
+  font-family: var(--font-serif), Georgia, "Times New Roman", serif;
+  font-feature-settings: "kern" 1, "ss01" 1;
+}
+.serif-italic {
+  font-family: var(--font-serif), Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-feature-settings: "kern" 1, "ss01" 1;
+}
+
+::selection {
+  background: var(--solvy-blue);
+  color: #fff;
+}
+:focus-visible {
+  outline: 2px solid var(--solvy-blue-light);
+  outline-offset: 3px;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* Label gigante de fundo (estilo WebHub) */
+.section-label-bg {
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.022);
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Reveal: conteudo SEMPRE visivel por padrao. O GSAP esconde so quando
+   o trigger ativa (immediateRender:false). Nunca fica preso invisivel. */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
