@@ -35,9 +35,11 @@
   --color-blue-light: var(--solvy-blue-light);
   --color-blue-deep: var(--solvy-blue-deep);
 
-  /* Dual-font: Molde so em DISPLAY, TT Commons Pro (surrogate Onest) em corpo/UI */
-  --font-display: var(--font-molde);
+  /* TT Commons em TUDO (display, body, UI). Molde Expanded fica reservada
+     pro logo da marca - opt-in via `font-brand` quando precisar. */
+  --font-display: var(--font-tt-commons);
   --font-sans: var(--font-tt-commons);
+  --font-brand: var(--font-molde);
 
   /* Display gigante mas peso medio (estilo WebHub headline) */
   --text-mega: clamp(2.75rem, 8vw, 8.5rem);
@@ -63,24 +65,30 @@ body {
   overflow-x: hidden;
 }
 
-/* Molde DIREITO: display em peso medio, tracking fechado, branco.
-   .display / .display-tight FORCAM a familia Molde — usar em headlines/manifesto. */
+/* Display agora usa TT Commons (igual o body). Mantemos as classes pra
+   centralizar tracking/leading dos headlines sem refatorar componentes. */
 .display {
-  font-family: var(--font-display), system-ui, sans-serif;
+  font-family: var(--font-tt-commons), system-ui, sans-serif;
   font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 0.98;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
 }
 .display-tight {
-  font-family: var(--font-display), system-ui, sans-serif;
+  font-family: var(--font-tt-commons), system-ui, sans-serif;
   font-weight: 500;
-  letter-spacing: -0.03em;
-  line-height: 1.04;
+  letter-spacing: -0.018em;
+  line-height: 1.08;
 }
 
-/* Ghost label tipo "06" / "PROBLEMA" — fica em Molde por ser cerimonial */
+/* Opt-in pra Molde Expanded: usar SO no logo da marca quando texto. */
+.font-brand {
+  font-family: var(--font-molde), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Ghost label tipo "06" / "PROBLEMA" — agora em TT Commons igual ao resto */
 .section-label-bg {
-  font-family: var(--font-display), system-ui, sans-serif;
+  font-family: var(--font-tt-commons), system-ui, sans-serif;
 }
 
 /* Headline serif editorial (estilo Zouti / Stripe Sigma).

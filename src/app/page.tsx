@@ -1,5 +1,5 @@
 import Hero from "@/components/sections/Hero";
-import ProblemSection from "@/components/sections/ProblemSection";
+import Method from "@/components/sections/Method";
 import ThesisSection from "@/components/sections/ThesisSection";
 import ServicesSection from "@/components/sections/ServicesSection";
 import ProcessSection from "@/components/sections/ProcessSection";
@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <ProblemSection />
+      <Method />
       <ThesisSection />
       <ServicesSection />
       <ProcessSection />

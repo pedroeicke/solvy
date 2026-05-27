@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import dynamic from "next/dynamic";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { gsap, useGSAP, ScrollTrigger } from "@/lib/gsap";
 import ScrollCue from "@/components/motion/ScrollCue";
+import HeroIdle from "./HeroIdle";
 
 const ColorBends = dynamic(() => import("@/components/ColorBends"), {
   ssr: false,
@@ -19,406 +20,409 @@ const WORDMARK =
 const VB_W = 1403.32;
 const VB_H = 384.62;
 
-const LINE1_PRE = "O software se adapta à";
-const LINE1_HI = "sua operação.";
-const LINE2 = "Não o contrário.";
-
-type P = {
-  ox: number;
-  oy: number;
-  nx: number;
-  delay: number;
-  span: number;
-  vx: number;
-  vy: number;
-  rot: number;
-  s: number;
-};
+// === CALIBRACAO VISUAL ===
+// Sequencia simples:
+//   pre-video (scroll 9 -> 14%): zoom 1 -> ALIGNMENT (icone chega no tamanho)
+//   video entra (scroll 14 -> 15.5%): icone faz FADE OUT (alpha 1 -> 0)
+//   resto: icone fora, video reverse toca; no fim, parallax assume
+const ICON_INITIAL_SCALE = 1;
+const ICON_ALIGNMENT_SCALE = 4;
+const VIDEO_START_PROGRESS = 0.155;
+const TEXT_REVEAL_TIME = 3;
+const HERO_PIN_DISTANCE = "220%";
 
 export default function Hero() {
-  const root = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const tplRef = useRef<{ u: number; v: number }[]>([]); // pontos normalizados 0..1
-  const partsRef = useRef<P[]>([]);
-  const progRef = useRef(0); // 0..1 da desintegracao (alvo)
-  const drawnRef = useRef(0); // valor suavizado desenhado
-  const builtRef = useRef(false);
-  const rafRef = useRef<number | null>(null);
-  const visibleRef = useRef(true);
-
-  const SAMPLE_W = 240;
-  const SAMPLE_STEP = 2; // denso -> estado integro parece solido
-
-  // Amostra a forma do icone usando o bbox REAL (getBBox) como viewBox.
-  // Assim os pontos normalizados batem 1:1 com o getBoundingClientRect
-  // do mesmo grupo -> nuvem de particulas alinhada exatamente ao SVG.
-  useEffect(() => {
-    let tries = 0;
-    const sample = () => {
-      const g = root.current?.querySelector(".hl-iconwrap") as SVGGraphicsElement | null;
-      if (!g) {
-        if (tries++ < 30) requestAnimationFrame(sample);
-        return;
-      }
-      const bb = g.getBBox();
-      if (!bb.width || !bb.height) {
-        if (tries++ < 30) requestAnimationFrame(sample);
-        return;
-      }
-      const W = SAMPLE_W;
-      const H = Math.max(1, Math.round((W * bb.height) / bb.width));
-      const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='${bb.x} ${bb.y} ${bb.width} ${bb.height}'><g fill='%23fff'><path d='${ICON_A}'/><path d='${ICON_B}'/></g></svg>`;
-      const img = new Image();
-      img.onload = () => {
-        const c = document.createElement("canvas");
-        c.width = W;
-        c.height = H;
-        const ctx = c.getContext("2d");
-        if (!ctx) return;
-        ctx.drawImage(img, 0, 0, W, H);
-        const data = ctx.getImageData(0, 0, W, H).data;
-        const pts: { u: number; v: number }[] = [];
-        for (let y = 0; y < H; y += SAMPLE_STEP) {
-          for (let x = 0; x < W; x += SAMPLE_STEP) {
-            if (data[(y * W + x) * 4 + 3] > 110) {
-              pts.push({ u: x / W, v: y / H });
-            }
-          }
-        }
-        tplRef.current = pts;
-      };
-      img.src = "data:image/svg+xml;charset=utf-8," + svg.replace(/#/g, "%23");
-    };
-    sample();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const buildParticles = () => {
-    const icon = root.current?.querySelector(".hl-iconwrap") as SVGGraphicsElement | null;
-    const cv = canvasRef.current;
-    if (!icon || !cv || tplRef.current.length === 0) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    cv.width = Math.floor(window.innerWidth * dpr);
-    cv.height = Math.floor(window.innerHeight * dpr);
-    cv.style.width = window.innerWidth + "px";
-    cv.style.height = window.innerHeight + "px";
-    const r = icon.getBoundingClientRect();
-    // tamanho da particula >= espaçamento da amostra -> quadrados se
-    // sobrepoem e o estado integro le como SOLIDO (sem grid).
-    const spacing = (SAMPLE_STEP / SAMPLE_W) * r.width * dpr;
-    const ps: P[] = [];
-    for (const t of tplRef.current) {
-      const ox = (r.left + t.u * r.width) * dpr;
-      const oy = (r.top + t.v * r.height) * dpr;
-      const nx = t.u; // 0 esq -> 1 dir (varredura)
-      ps.push({
-        ox,
-        oy,
-        nx,
-        delay: nx * 0.5 + Math.random() * 0.07,
-        span: 0.42 + Math.random() * 0.12,
-        vx: (300 + Math.random() * 620) * dpr,
-        vy: ((Math.random() - 0.5) * 150 - 30) * dpr,
-        rot: (Math.random() - 0.5) * 6,
-        s: spacing * (1.35 + Math.random() * 0.5),
-      });
-    }
-    partsRef.current = ps;
-    builtRef.current = true;
-  };
-
-  const renderDust = () => {
-    if (!visibleRef.current) {
-      rafRef.current = null;
-      return;
-    }
-    const cv = canvasRef.current;
-    const ctx = cv?.getContext("2d");
-    if (!cv || !ctx) return;
-    drawnRef.current += (progRef.current - drawnRef.current) * 0.18;
-    const Pv = drawnRef.current;
-    ctx.clearRect(0, 0, cv.width, cv.height);
-    ctx.fillStyle = "#ffffff";
-    const ps = partsRef.current;
-    for (let i = 0; i < ps.length; i++) {
-      const p = ps[i];
-      let lt = (Pv - p.delay) / p.span;
-      if (lt <= 0) {
-        ctx.globalAlpha = 1;
-        ctx.fillRect(p.ox - p.s / 2, p.oy - p.s / 2, p.s, p.s);
-        continue;
-      }
-      if (lt >= 1) continue;
-      const e = 1 - Math.pow(1 - lt, 2); // easeOut
-      const turb = Math.sin(lt * 7 + p.nx * 12) * lt * 26 * (cv.width / window.innerWidth);
-      const x = p.ox + e * p.vx;
-      const y = p.oy + e * p.vy + turb - e * 20 * (cv.width / window.innerWidth);
-      ctx.globalAlpha = 1 - lt;
-      const s = p.s * (1 - 0.55 * lt);
-      ctx.fillRect(x - s / 2, y - s / 2, s, s);
-    }
-    ctx.globalAlpha = 1;
-    rafRef.current = requestAnimationFrame(renderDust);
-  };
-
-  useEffect(() => {
-    const sec = root.current;
-    if (!sec) return;
-
-    const start = () => {
-      if (rafRef.current == null) rafRef.current = requestAnimationFrame(renderDust);
-    };
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        const inView = entries[0]?.isIntersecting ?? false;
-        visibleRef.current = inView && document.visibilityState === "visible";
-        if (visibleRef.current) start();
-      },
-      { threshold: 0 }
-    );
-    io.observe(sec);
-
-    const onVis = () => {
-      const docOk = document.visibilityState === "visible";
-      const rect = sec.getBoundingClientRect();
-      const inView =
-        rect.bottom > 0 && rect.top < (window.innerHeight || 0);
-      visibleRef.current = docOk && inView;
-      if (visibleRef.current) start();
-    };
-    document.addEventListener("visibilitychange", onVis);
-
-    start();
-
-    return () => {
-      if (rafRef.current != null) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-      io.disconnect();
-      document.removeEventListener("visibilitychange", onVis);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoStartedRef = useRef(false);
+  const videoEndedRef = useRef(false);
+  const textVisibleRef = useRef(false);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const iconRef = useRef<SVGGElement>(null);
+  const wordmarkRef = useRef<SVGPathElement>(null);
+  const haloRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const frase1Ref = useRef<HTMLHeadingElement>(null);
+  const frase2Ref = useRef<HTMLHeadingElement>(null);
+  const scrollCueRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      gsap.set(".hl-wordmark", { autoAlpha: 1, x: 0 });
-      gsap.set(".hl-iconwrap", {
+      if (!sectionRef.current) return;
+      const video = videoRef.current;
+
+      // Estados iniciais
+      gsap.set(wordmarkRef.current, { autoAlpha: 1, x: 0, force3D: true });
+      gsap.set(iconRef.current, {
         x: 0,
         y: 0,
         scale: 1,
         autoAlpha: 1,
-        transformOrigin: "center",
+        transformOrigin: "center center",
         transformBox: "fill-box",
+        force3D: true,
       });
-      gsap.set(".hl-dust", { autoAlpha: 0 });
-      gsap.set(".hl-flash", { opacity: 0 });
-      gsap.set(".ph-wrap", { autoAlpha: 0 });
-      gsap.set(".ph-w", { opacity: 0, y: 28, filter: "blur(12px)" });
+      gsap.set(sceneRef.current, { opacity: 0 });
+      gsap.set(haloRef.current, { opacity: 1 });
+      gsap.set(scrollCueRef.current, { opacity: 1 });
+      gsap.set([frase1Ref.current, frase2Ref.current], {
+        opacity: 0,
+        filter: "blur(8px)",
+      });
+      if (video) {
+        gsap.set(video, { opacity: 0 });
+      }
 
-      const iconCenter = () => {
-        const g = root.current?.querySelector(".hl-iconwrap") as SVGGraphicsElement | null;
-        if (!g) return { cx: 159, cy: 184 };
-        const b = g.getBBox();
-        return { cx: b.x + b.width / 2, cy: b.y + b.height / 2 };
-      };
-      const dx = () => VB_W / 2 - iconCenter().cx;
-      const dy = () => VB_H / 2 - iconCenter().cy;
-
-      const D0 = 0.42; // inicio da desintegracao (apos o crossfade)
-      const D1 = 0.66; // fim
-
-      // build/exit só gerenciam as particulas; o crossfade de
-      // autoAlpha (SVG <-> canvas) e feito por tweens no timeline.
-      const enterDust = () => {
-        if (builtRef.current) return;
-        buildParticles();
-      };
-      const exitDust = () => {
-        if (!builtRef.current) return;
-        builtRef.current = false;
-        partsRef.current = [];
-        progRef.current = 0;
-        drawnRef.current = 0;
-      };
-
-      const mm = gsap.matchMedia();
-      mm.add("(min-width: 768px)", () => {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: root.current,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 1,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              const pr = self.progress;
-              if (pr >= 0.345) enterDust();
-              else if (pr < 0.3) exitDust();
-              progRef.current = gsap.utils.clamp(0, 1, (pr - D0) / (D1 - D0));
-            },
-          },
+      const hideText = () => {
+        textVisibleRef.current = false;
+        gsap.set([frase1Ref.current, frase2Ref.current], {
+          opacity: 0,
+          filter: "blur(8px)",
         });
+      };
 
-        // FASE 1 (0-.34): some o texto; o icone centra e cresce
-        tl.to(".hl-wordmark", { autoAlpha: 0, x: 120, ease: "power2.in", duration: 0.26 }, 0)
-          .to(".hl-iconwrap", { x: dx, y: dy, scale: 2.6, ease: "power3.out", duration: 0.34 }, 0)
-          .to(".hl-cue", { autoAlpha: 0, duration: 0.1 }, 0)
-          .to(".hl-bg", { opacity: 0.4, duration: 0.42 }, 0.05);
-
-        // CROSSFADE (.35-.42): SVG solido -> particulas integras (sem corte)
-        tl.to(".hl-iconwrap", { autoAlpha: 0, ease: "none", duration: 0.07 }, 0.35)
-          .fromTo(".hl-dust", { autoAlpha: 0 }, { autoAlpha: 1, ease: "none", duration: 0.07 }, 0.35);
-
-        // FASE 2 (.42-.66): desintegracao tipo Thanos (canvas via progRef)
-        tl.to(".hl-flash", { opacity: 0.5, duration: 0.14 }, 0.46)
-          .to(".hl-flash", { opacity: 0, duration: 0.2 }, 0.6);
-
-        // FASE 3 (.58-.86): linha 1 entra primeiro, linha 2 logo em seguida
-        // (mesmo efeito: opacity + y + blur). Separado por classe pra
-        // garantir ordem visual e nao depender so de DOM order do stagger.
-        const wordIn = {
+      const showText = () => {
+        if (textVisibleRef.current) return;
+        textVisibleRef.current = true;
+        gsap.to(frase1Ref.current, {
           opacity: 1,
-          y: 0,
           filter: "blur(0px)",
-          stagger: 0.012,
+          duration: 0.65,
           ease: "power2.out",
-          duration: 0.14,
-        } as const;
-        tl.to(".ph-wrap", { autoAlpha: 1, duration: 0.04 }, 0.58)
-          .to(".ph-l1", wordIn, 0.59)
-          .to(".ph-l2", wordIn, 0.7);
+        });
+        gsap.to(frase2Ref.current, {
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 0.65,
+          delay: 0.12,
+          ease: "power2.out",
+        });
+      };
 
-        // (.86-.95) frase FICA parada pra leitura — nenhum tween aqui
+      const resetVideo = () => {
+        if (!video) return;
+        video.pause();
+        if (video.currentTime > 0) {
+          video.currentTime = 0;
+        }
+        videoStartedRef.current = false;
+        videoEndedRef.current = false;
+        hideText();
+        gsap.set(video, { opacity: 0 });
+        gsap.set(sceneRef.current, { opacity: 0 });
+      };
 
-        // FASE 4 (.95-1): frase sai e entrega na proxima secao
-        tl.to(".ph-wrap", { autoAlpha: 0, y: -26, ease: "power2.in", duration: 0.05 }, 0.95)
-          .to(".hl-bg", { opacity: 0, duration: 0.06 }, 0.94);
+      const playVideo = () => {
+        if (!video || videoStartedRef.current || videoEndedRef.current) return;
+        videoStartedRef.current = true;
+        video.currentTime = 0;
+        gsap.to(video, { opacity: 1, duration: 0.25, ease: "power2.out" });
+        video.play().catch(() => {
+          videoStartedRef.current = false;
+        });
+      };
 
-        return () => {
-          tl.scrollTrigger?.kill();
-          tl.kill();
-        };
+      const handleVideoEnd = () => {
+        if (!video) return;
+        videoEndedRef.current = true;
+        showText();
+        const st = scrollTriggerRef.current;
+        if (st && window.scrollY < st.end) {
+          st.scroll(st.end);
+        }
+        gsap.to(sceneRef.current, {
+          opacity: 1,
+          duration: 0.65,
+          ease: "power2.out",
+        });
+        gsap.to(video, { opacity: 0, duration: 0.45, ease: "power2.out" });
+      };
+      const handleVideoTimeUpdate = () => {
+        if ((video?.currentTime ?? 0) >= TEXT_REVEAL_TIME) {
+          showText();
+        }
+      };
+      video?.addEventListener("ended", handleVideoEnd);
+      video?.addEventListener("timeupdate", handleVideoTimeUpdate);
+
+      // Mede offset SVG-units pra centralizar o icone no viewBox
+      let iconDx = VB_W / 2 - 159;
+      let iconDy = VB_H / 2 - 184;
+      if (iconRef.current) {
+        try {
+          const b = iconRef.current.getBBox();
+          if (b.width && b.height) {
+            iconDx = VB_W / 2 - (b.x + b.width / 2);
+            iconDy = VB_H / 2 - (b.y + b.height / 2);
+          }
+        } catch {}
+      }
+
+      const st = ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: `+=${HERO_PIN_DISTANCE}`,
+        pin: true,
+        scrub: 0.5,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const p = self.progress;
+
+          // ============================================
+          // FASE 1: 0% -> 8% — Estado inicial
+          // ============================================
+          // Tudo ja visivel via gsap.set; nada muda aqui
+
+          // ============================================
+          // FASE 2: 3% -> 9% — Wordmark sai E icone vai pro centro
+          // ============================================
+          if (p < 0.03) {
+            gsap.set(wordmarkRef.current, { opacity: 1, x: 0 });
+          } else if (p < 0.09) {
+            const t = (p - 0.03) / 0.06;
+            gsap.set(wordmarkRef.current, {
+              opacity: 1 - t,
+              x: t * 200,
+            });
+          } else {
+            gsap.set(wordmarkRef.current, { opacity: 0 });
+          }
+
+          // ============================================
+          // FASE 3: Icone simples - entra, vai pro centro, zoom ate alignment,
+          //         fade out junto com entrada do video. Sem ciclo.
+          //   0.03 -> 0.09: translada pro centro
+          //   0.09 -> 0.14: zoom 1 -> ALIGNMENT
+          //   0.14 -> 0.22: FADE OUT (alpha 1 -> 0) junto com entrada do video
+          //   0.22+      : fora da cena
+          // ============================================
+          if (p < 0.03) {
+            gsap.set(iconRef.current, {
+              x: 0,
+              y: 0,
+              scale: ICON_INITIAL_SCALE,
+              opacity: 1,
+            });
+          } else if (p < 0.09) {
+            const t = (p - 0.03) / 0.06;
+            gsap.set(iconRef.current, {
+              x: t * iconDx,
+              y: t * iconDy,
+              scale: ICON_INITIAL_SCALE,
+              opacity: 1,
+            });
+          } else if (p < 0.14) {
+            const t = (p - 0.09) / 0.05;
+            const eased = 1 - Math.pow(1 - t, 2);
+            const scale =
+              ICON_INITIAL_SCALE +
+              (ICON_ALIGNMENT_SCALE - ICON_INITIAL_SCALE) * eased;
+            gsap.set(iconRef.current, {
+              x: iconDx,
+              y: iconDy,
+              scale,
+              opacity: 1,
+            });
+          } else if (p < 0.155) {
+            // Video entrando - icone FADE OUT RAPIDO (1.5% de scroll = ~7vh)
+            const t = (p - 0.14) / 0.015;
+            gsap.set(iconRef.current, {
+              x: iconDx,
+              y: iconDy,
+              scale: ICON_ALIGNMENT_SCALE,
+              opacity: 1 - t,
+            });
+          } else {
+            gsap.set(iconRef.current, {
+              x: iconDx,
+              y: iconDy,
+              opacity: 0,
+            });
+          }
+
+          // ============================================
+          // FASE 4: video reverse toca quando o icone sai.
+          // O parallax so aparece no ended do video.
+          // ============================================
+          if (p < VIDEO_START_PROGRESS) {
+            if (
+              videoStartedRef.current ||
+              videoEndedRef.current ||
+              (video?.currentTime ?? 0) > 0
+            ) {
+              resetVideo();
+            }
+          } else {
+            playVideo();
+            if (videoEndedRef.current) {
+              gsap.set(sceneRef.current, { opacity: 1 });
+              gsap.set(video, { opacity: 0 });
+            } else {
+              gsap.set(sceneRef.current, { opacity: 0 });
+            }
+          }
+
+          // ============================================
+          // FASE 5: 3% -> 22% — Halo aurora fade out
+          // ============================================
+          if (p < 0.03) {
+            gsap.set(haloRef.current, { opacity: 1 });
+          } else if (p < 0.22) {
+            const t = (p - 0.03) / 0.19;
+            gsap.set(haloRef.current, { opacity: 1 - t });
+          } else {
+            gsap.set(haloRef.current, { opacity: 0 });
+          }
+
+          // ============================================
+          // FASE 6: 0% -> 8% — Scroll cue some (rapido)
+          // ============================================
+          if (p < 0.02) {
+            gsap.set(scrollCueRef.current, { opacity: 1 });
+          } else if (p < 0.08) {
+            const t = (p - 0.02) / 0.06;
+            gsap.set(scrollCueRef.current, { opacity: 1 - t });
+          } else {
+            gsap.set(scrollCueRef.current, { opacity: 0 });
+          }
+
+          // ============================================
+          //   (sem fade out — ficam ate proxima secao subir)
+          // ============================================
+        },
       });
+      scrollTriggerRef.current = st;
+
+      return () => {
+        video?.removeEventListener("ended", handleVideoEnd);
+        video?.removeEventListener("timeupdate", handleVideoTimeUpdate);
+        scrollTriggerRef.current = null;
+        st.kill();
+      };
     },
-    { scope: root }
+    { scope: sectionRef }
   );
 
   return (
-    <section ref={root} id="top" className="relative h-[360vh] bg-bg">
-      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
-        <div className="hl-bg absolute inset-0">
-          <div
-            aria-hidden
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(60vw 60vh at 70% 25%, rgba(0,167,244,0.22), transparent 60%), radial-gradient(55vw 55vh at 25% 80%, rgba(2,126,226,0.20), transparent 60%), #030305",
-            }}
-          />
-          <div className="absolute inset-0">
-            <ColorBends
-              colors={["#012a4a", "#027ee2", "#00a7f4", "#0a4a86"]}
-              rotation={90}
-              speed={0.16}
-              scale={1.35}
-              frequency={0.5}
-              warpStrength={1}
-              mouseInfluence={0.18}
-              parallax={0.2}
-              noise={0}
-              iterations={2}
-              intensity={1}
-              bandWidth={5}
-              transparent
-            />
-          </div>
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(ellipse 60% 60% at 50% 50%, transparent 30%, rgba(3,3,5,0.55) 75%, #030305 100%)",
-            }}
-          />
-        </div>
-
+    <section
+      ref={sectionRef}
+      id="top"
+      className="relative h-screen w-full overflow-hidden bg-bg"
+    >
+      {/* Z-0: Halo aurora (ColorBends + radial gradients + vignette) */}
+      <div
+        ref={haloRef}
+        className="absolute inset-0 z-0 pointer-events-none"
+        aria-hidden
+      >
         <div
           aria-hidden
-          className="hl-flash pointer-events-none absolute left-1/2 top-1/2 z-10 h-[42vh] w-[60vw] -translate-x-1/2 -translate-y-1/2 opacity-0"
+          className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(0,167,244,0.5), rgba(2,126,226,0.16) 45%, transparent 70%)",
-            filter: "blur(30px)",
+              "radial-gradient(60vw 60vh at 70% 25%, rgba(0,167,244,0.22), transparent 60%), radial-gradient(55vw 55vh at 25% 80%, rgba(2,126,226,0.20), transparent 60%), #030305",
           }}
         />
-
-        {/* canvas das particulas (estalo) */}
-        <canvas
-          ref={canvasRef}
-          className="hl-dust pointer-events-none absolute inset-0 z-20"
+        <div className="absolute inset-0">
+          <ColorBends
+            colors={["#012a4a", "#027ee2", "#00a7f4", "#0a4a86"]}
+            rotation={90}
+            speed={0.16}
+            scale={1.35}
+            frequency={0.5}
+            warpStrength={1}
+            mouseInfluence={0.18}
+            parallax={0.2}
+            noise={0}
+            iterations={2}
+            intensity={1}
+            bandWidth={5}
+            transparent
+          />
+        </div>
+        <div
           aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 60% at 50% 50%, transparent 30%, rgba(3,3,5,0.55) 75%, #030305 100%)",
+          }}
         />
+      </div>
 
-        {/* logo completo (rest + fase 1) */}
+      {/* Z-10: Cena parallax (HeroIdle - stub por enquanto) */}
+      <div ref={sceneRef} className="absolute inset-0 z-10">
+        <HeroIdle />
+      </div>
+
+      {/* Z-20: Video reverse - toca depois que o icone sai */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 z-20 h-full w-full object-cover pointer-events-none"
+        style={{ opacity: 0 }}
+        src="/video/poshero-reverse-hq.mp4"
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden
+      />
+
+      {/* Z-30: Logo - SVG inline (icone branco + wordmark) */}
+      <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
         <svg
           viewBox={`0 0 ${VB_W} ${VB_H}`}
-          className="relative z-10 h-auto w-[min(74vw,620px)] px-6 drop-shadow-[0_8px_60px_rgba(0,167,244,0.35)]"
+          className="relative h-auto w-[min(74vw,620px)] px-6 drop-shadow-[0_6px_28px_rgba(0,167,244,0.32)]"
           style={{ overflow: "visible" }}
           fill="#ffffff"
           aria-label="Solvy"
         >
-          <g className="hl-iconwrap">
-            <path className="icon-a" d={ICON_A} />
-            <path className="icon-b" d={ICON_B} />
+          <g ref={iconRef}>
+            <path d={ICON_A} />
+            <path d={ICON_B} />
           </g>
-          <path className="hl-wordmark" d={WORDMARK} />
+          <path ref={wordmarkRef} d={WORDMARK} />
         </svg>
+      </div>
 
-        {/* frase que surge depois do estalo */}
-        <div className="ph-wrap pointer-events-none absolute inset-x-0 z-10 mx-auto max-w-[1240px] px-6 text-center">
-          <p className="display-tight text-[clamp(1.5rem,2.8vw,2.6rem)] leading-[1.12] text-fg">
-            <span className="whitespace-normal md:whitespace-nowrap">
-              {LINE1_PRE.split(" ").map((w, i) => (
-                <span
-                  key={`a${i}`}
-                  className="ph-w ph-l1 inline-block whitespace-pre"
-                >
-                  {w}{" "}
-                </span>
-              ))}
-              <span className="ph-w ph-l1 inline-block whitespace-pre">
-                <span
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(90deg, #027ee2 0%, #00a7f4 100%)",
-                    WebkitBackgroundClip: "text",
-                    backgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    color: "transparent",
-                  }}
-                >
-                  {LINE1_HI}
-                </span>
-              </span>
+      {/* Z-40: Frases (manifesto) */}
+      <div className="absolute inset-0 flex items-center justify-center z-40 pointer-events-none px-6">
+        <div className="text-center max-w-3xl">
+          <h1
+            ref={frase1Ref}
+            className="display font-display text-[clamp(2rem,5.5vw,4.5rem)] text-fg leading-[1.05]"
+            style={{ opacity: 0 }}
+          >
+            O software se adapta à sua operação.
+          </h1>
+          <h1
+            ref={frase2Ref}
+            className="display font-display text-[clamp(2rem,5.5vw,4.5rem)] text-fg leading-[1.05] mt-4"
+            style={{ opacity: 0 }}
+          >
+            Não o{" "}
+            <span
+              style={{
+                backgroundImage:
+                  "linear-gradient(90deg, var(--solvy-blue) 0%, var(--solvy-blue-light) 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                color: "transparent",
+              }}
+            >
+              contrário
             </span>
-            <br />
-            {LINE2.split(" ").map((w, i) => (
-              <span
-                key={`b${i}`}
-                className="ph-w ph-l2 inline-block whitespace-pre"
-              >
-                {w}{" "}
-              </span>
-            ))}
-          </p>
+            .
+          </h1>
         </div>
+      </div>
 
-        <div className="hl-cue absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
-          <ScrollCue />
-        </div>
+      {/* Z-50: Scroll cue (circular) */}
+      <div
+        ref={scrollCueRef}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-none"
+      >
+        <ScrollCue />
       </div>
     </section>
   );
