@@ -1,55 +1,127 @@
 import Image from "next/image";
 import { content } from "@/content";
+import Container from "@/components/ui/Container";
+import EditorialQuote from "@/components/ui/EditorialQuote";
+import HairlineDivider from "@/components/ui/HairlineDivider";
+import MetadataLabel from "@/components/ui/MetadataLabel";
+
+// ============================================================
+// FOOTER EDITORIAL — 4 colunas (Marca / Site / Contato / Social).
+// Texto pequeno, hairlines, fechamento com Newsreader italic.
+// ============================================================
+
+const siteNav = [
+  { label: "Manifesto", href: "#manifesto" },
+  { label: "Método", href: "#metodo" },
+  { label: "Construímos", href: "#construimos" },
+  { label: "Cases", href: "#cases" },
+  { label: "Processo", href: "#processo" },
+  { label: "Quem", href: "#socios" },
+  { label: "Stack", href: "#stack" },
+];
+
+const social = [
+  {
+    label: "LinkedIn",
+    href: "https://linkedin.com/company/solvy",
+  },
+  { label: "Instagram", href: "https://instagram.com" },
+];
+
+const contato = [
+  { label: "hello@solvy.com", href: "mailto:hello@solvy.com" },
+  { label: "WhatsApp", href: "#contato" },
+];
 
 export default function Footer() {
-  const { footer, header } = content;
-  return (
-    <footer className="relative overflow-hidden border-t border-line bg-bg-2">
-      <div className="pointer-events-none absolute -bottom-1/3 left-1/2 h-[90%] w-[80%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(0,167,244,0.12),transparent_62%)]" />
+  const { footer } = content;
 
-      <div className="relative mx-auto max-w-[1240px] px-6 py-20 md:px-10 md:py-28">
-        <div className="flex flex-col gap-12 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-lg">
+  return (
+    <footer className="relative overflow-hidden border-t border-faint/20 bg-bg-2 py-20 md:py-28">
+      <Container>
+        <div className="grid grid-cols-2 gap-12 md:grid-cols-4">
+          {/* Marca */}
+          <div className="col-span-2 md:col-span-1">
             <Image
               src="/brand/logobranca.png"
               alt="Solvy"
-              width={180}
-              height={50}
-              className="h-11 w-auto md:h-14"
+              width={140}
+              height={40}
+              className="h-9 w-auto"
             />
-            <p className="mt-8 display-tight text-huge text-fg">
-              {footer.tagline}
-            </p>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted">
+            <p className="mt-6 max-w-xs text-sm leading-relaxed text-muted">
               {footer.line}
             </p>
+            <MetadataLabel className="mt-8 block">
+              São Paulo · Brasil
+            </MetadataLabel>
           </div>
-          <nav className="flex flex-col gap-3">
-            {header.nav.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className="text-sm text-muted transition-colors hover:text-fg"
-              >
-                {l.label}
-              </a>
-            ))}
-            <a
-              href="#contato"
-              className="text-sm text-blue-light transition-colors hover:text-fg"
-            >
-              {header.cta}
-            </a>
-          </nav>
+
+          {/* Site */}
+          <div>
+            <MetadataLabel>Site</MetadataLabel>
+            <ul className="mt-4 space-y-2">
+              {siteNav.map((l) => (
+                <li key={l.href}>
+                  <a
+                    href={l.href}
+                    className="text-sm text-fg/80 transition-colors hover:text-fg"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contato */}
+          <div>
+            <MetadataLabel>Contato</MetadataLabel>
+            <ul className="mt-4 space-y-2">
+              {contato.map((l) => (
+                <li key={l.label}>
+                  <a
+                    href={l.href}
+                    className="text-sm text-fg/80 transition-colors hover:text-fg"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Social */}
+          <div>
+            <MetadataLabel>Social</MetadataLabel>
+            <ul className="mt-4 space-y-2">
+              {social.map((l) => (
+                <li key={l.label}>
+                  <a
+                    href={l.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-fg/80 transition-colors hover:text-fg"
+                  >
+                    {l.label} ↗
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        <div className="mt-20 flex flex-col gap-2 border-t border-line pt-8 text-xs text-faint md:flex-row md:items-center md:justify-between">
-          <span>{footer.founders}</span>
-          <span>
-            © {new Date().getFullYear()} Solvy. {footer.rights}
-          </span>
+        <HairlineDivider className="mt-16" />
+
+        <div className="mt-8 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <p className="text-xs uppercase tracking-[0.14em] text-faint">
+            © {new Date().getFullYear()} Solvy. {footer.founders}
+          </p>
+          <EditorialQuote className="!text-faint">
+            Software sob medida.
+          </EditorialQuote>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }
