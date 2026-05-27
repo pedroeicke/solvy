@@ -14,8 +14,6 @@ import { useEffect, useRef } from "react";
 const LAYERS = [
   { src: "/hero-layers/base.png", strength: 0, scale: 1.0 },
   { src: "/hero-layers/ceu.png", strength: 8, scale: 1.03 },
-  { src: "/hero-layers/pedraesquerda.png", strength: 14, scale: 1.04 },
-  { src: "/hero-layers/pedradireita.png", strength: 14, scale: 1.04 },
   { src: "/hero-layers/caverna.png", strength: 18, scale: 1.05 },
   { src: "/hero-layers/homem.png", strength: 28, scale: 1.06 },
   { src: "/hero-layers/arvore.png", strength: 36, scale: 1.08 },
