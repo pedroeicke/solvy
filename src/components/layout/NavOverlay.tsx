@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { content } from "@/content";
@@ -14,10 +14,7 @@ import { content } from "@/content";
 // ============================================================
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-// Glass translúcido (não mais gradiente sólido) — vê o conteúdo borrado atrás
-const PANEL_BG =
-  "linear-gradient(to bottom right, rgba(2,126,226,0.5), rgba(0,167,244,0.4))";
-const SQUARE = 56; // tamanho do quadradinho fechado (menorzinho)
+const PANEL_BG = "linear-gradient(to bottom right, #027ee2, #00a7f4)";
 
 const SOCIALS = [
   {
@@ -35,34 +32,19 @@ const SOCIALS = [
 export default function NavOverlay() {
   const reduce = useReducedMotion();
   const [active, setActive] = useState(false);
-  const [visible, setVisible] = useState(false);
   const links = content.header.nav;
-
-  // Só aparece DEPOIS do vídeo do hero (pin ~220% → scrub acaba ~1.9 telas).
-  useEffect(() => {
-    const onScroll = () => {
-      setVisible(window.scrollY > window.innerHeight * 1.8);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Enquanto aberto, mantém visível mesmo se voltar pro topo
-  const show = visible || active;
 
   return (
     <>
-      {/* Painel glass que redimensiona */}
+      {/* Painel gradiente que redimensiona */}
       <motion.div
         aria-hidden
-        className="fixed right-4 top-4 z-[100] rounded-xl border border-white/15 shadow-lg shadow-blue-deep/20 backdrop-blur-xl"
+        className="fixed right-4 top-4 z-[100] rounded-xl shadow-lg shadow-blue-deep/30"
         style={{ background: PANEL_BG }}
         initial={false}
         animate={{
-          width: active ? "calc(100% - 32px)" : SQUARE,
-          height: active ? "calc(100vh - 32px)" : SQUARE,
-          opacity: show ? 1 : 0,
+          width: active ? "calc(100% - 32px)" : 80,
+          height: active ? "calc(100vh - 32px)" : 80,
         }}
         transition={{
           duration: reduce ? 0 : 0.55,
@@ -182,47 +164,43 @@ export default function NavOverlay() {
       </AnimatePresence>
 
       {/* Botão hambúrguer (sempre por cima) */}
-      <motion.button
+      <button
         onClick={() => setActive((v) => !v)}
         aria-label={active ? "Fechar menu" : "Abrir menu"}
         aria-expanded={active}
-        initial={false}
-        animate={{ opacity: show ? 1 : 0 }}
-        transition={{ duration: reduce ? 0 : 0.4, ease: EASE }}
-        style={{ pointerEvents: show ? "auto" : "none" }}
-        className="group fixed right-4 top-4 z-[120] h-14 w-14 rounded-xl bg-white/0 transition-colors hover:bg-white/10"
+        className="group fixed right-4 top-4 z-[120] h-20 w-20 rounded-xl bg-white/0 transition-colors hover:bg-white/10"
       >
         {/* linha superior */}
         <motion.span
-          className="absolute left-1/2 block h-[3px] rounded bg-white"
+          className="absolute left-1/2 block h-1 bg-white"
           animate={
             active
-              ? { top: "50%", width: 24, rotate: 45, x: "-50%", y: "-50%" }
-              : { top: "38%", width: 24, rotate: 0, x: "-50%", y: "-50%" }
+              ? { top: "50%", width: 40, rotate: 45, x: "-50%", y: "-50%" }
+              : { top: "35%", width: 40, rotate: 0, x: "-50%", y: "-50%" }
           }
           transition={{ duration: reduce ? 0 : 0.35, ease: EASE }}
         />
         {/* linha do meio */}
         <motion.span
-          className="absolute left-1/2 block h-[3px] rounded bg-white"
+          className="absolute left-1/2 block h-1 bg-white"
           animate={
             active
-              ? { top: "50%", width: 24, rotate: -45, x: "-50%", y: "-50%" }
-              : { top: "50%", width: 24, rotate: 0, x: "-50%", y: "-50%" }
+              ? { top: "50%", width: 40, rotate: -45, x: "-50%", y: "-50%" }
+              : { top: "50%", width: 40, rotate: 0, x: "-50%", y: "-50%" }
           }
           transition={{ duration: reduce ? 0 : 0.35, ease: EASE }}
         />
         {/* linha inferior curta */}
         <motion.span
-          className="absolute block h-[3px] rounded bg-white"
+          className="absolute block h-1 bg-white"
           animate={
             active
-              ? { bottom: "50%", left: "50%", width: 12, rotate: 45, x: "-50%", y: "50%" }
-              : { bottom: "38%", left: "calc(50% + 6px)", width: 12, rotate: 0, x: "-50%", y: "50%" }
+              ? { bottom: "50%", left: "50%", width: 20, rotate: 45, x: "-50%", y: "50%" }
+              : { bottom: "35%", left: "calc(50% + 10px)", width: 20, rotate: 0, x: "-50%", y: "50%" }
           }
           transition={{ duration: reduce ? 0 : 0.35, ease: EASE }}
         />
-      </motion.button>
+      </button>
     </>
   );
 }
