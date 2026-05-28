@@ -117,6 +117,30 @@ export const pt = {
     ],
   },
 
+  proof: {
+    label: "Prova",
+    title: "Projetos no ar, operação real.",
+    stats: [
+      {
+        value: 12000,
+        suffix: "+",
+        label: "inscritos processados em eventos que construímos",
+      },
+      { value: 6, suffix: "", label: "plataformas em produção" },
+      {
+        value: 99.9,
+        suffix: "%",
+        label: "uptime nas aplicações que sustentamos",
+      },
+      {
+        value: 15,
+        suffix: " anos",
+        label: "de experiência no comando do projeto",
+      },
+    ],
+    note: "Números ilustrativos — substituir pelos reais.",
+  },
+
   process: {
     label: "Como trabalhamos",
     title: "Da escuta à sustentação.",

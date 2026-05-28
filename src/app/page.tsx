@@ -1,6 +1,7 @@
 import Hero from "@/components/sections/Hero";
 import ThesisSection from "@/components/sections/ThesisSection";
 import ServicesSection from "@/components/sections/ServicesSection";
+import ProofSection from "@/components/sections/ProofSection";
 import ProcessSection from "@/components/sections/ProcessSection";
 import ComparisonSection from "@/components/sections/ComparisonSection";
 import FoundersSection from "@/components/sections/FoundersSection";
@@ -24,7 +25,7 @@ export default function Home() {
       <ServicesSection />
 
       {/* 4 — prova */}
-      {/* <ProofSection/> — Onda Prova (criada no prompt A3) */}
+      <ProofSection />
 
       {/* 5 — como trabalhamos */}
       <ProcessSection />
