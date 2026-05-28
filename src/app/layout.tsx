@@ -3,6 +3,7 @@ import { molde, ttCommons, newsreader } from "./fonts";
 import { content, locale } from "@/content";
 import SmoothScroll from "@/components/SmoothScroll";
 import Header from "@/components/layout/Header";
+import NavOverlay from "@/components/layout/NavOverlay";
 import Footer from "@/components/layout/Footer";
 import "./globals.css";
 
@@ -48,6 +49,7 @@ export default function RootLayout({
         />
         <SmoothScroll>
           <Header />
+          <NavOverlay />
           <main>{children}</main>
           <Footer />
         </SmoothScroll>
