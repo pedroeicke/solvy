@@ -1,8 +1,10 @@
 /**
- * Conteudo PT — voz Solvy (brief 2, reposicionado).
- * Eixo publico: "O software precisa caber na sua empresa."
- * USA: gargalo, operacao, processo, rotina, ferramenta, encaixe, realidade,
- * fluxo, controle, sob medida, caber, improviso, sistema proprio.
+ * Conteudo PT — voz Solvy (brief 3: reposicionado pra decisor B2B, ticket alto).
+ * Eixo publico: "O software cabe na operacao." Leitor-alvo: decisor (dono,
+ * diretor, gestor de operacao madura) — nao o micro-empreendedor envergonhado.
+ * USA: gargalo, operacao, processo, ferramenta, encaixe, realidade, fluxo,
+ * controle, sob medida, caber, improviso, sistema proprio, escala,
+ * continuidade, operacao madura, previsivel, risco.
  * NUNCA: dor, transformacao digital, inovacao, jornada, agil, premium, excelencia.
  *
  * i18n-ready: criar en.ts com o mesmo shape (SiteContent) e trocar em ./index.ts.
@@ -27,41 +29,41 @@ export const pt = {
 
   hero: {
     eyebrow: "Estúdio de software sob medida · Conduzido por dois sócios técnicos",
-    titleTop: "Sua empresa não precisa se adaptar ao software.",
-    titleBottom: "O software precisa caber na sua empresa.",
-    sub: "A Solvy cria sistemas sob medida para empresas que precisam substituir improvisos, planilhas e ferramentas genéricas por uma solução pensada para a operação real.",
+    titleTop: "Sua operação não se adapta ao software.",
+    titleBottom: "O software cabe na sua operação.",
+    sub: "A Solvy constrói sistemas sob medida para operações que já escalaram além da ferramenta genérica — onde cada contorno manual vira risco e cada processo na cabeça de uma pessoa vira gargalo.",
     ctaPrimary: "Falar sobre meu projeto",
     ctaSecondary: "Ver como trabalhamos",
   },
 
   problem: {
     label: "O problema",
-    title: "Quando a operação cresce, o improviso começa a cobrar conta.",
-    body: "A planilha que resolvia tudo começa a travar o processo. O sistema pronto exige contornos demais. As informações ficam espalhadas. E o controle passa a depender de pessoas específicas — não de uma ferramenta confiável.",
+    title: "Quando a operação escala, o improviso vira risco.",
+    body: "A planilha que resolvia tudo vira ponto único de falha. O sistema pronto exige contornos que ninguém documenta. A informação se espalha. E a operação passa a depender de pessoas específicas — não de um sistema em que dá pra confiar.",
     items: [
       {
         title: "Planilha que virou sistema",
-        desc: "O que era um controle simples virou o coração da operação — frágil e sem dono.",
+        desc: "O controle crítico da operação roda numa planilha que ninguém pode derrubar — e que não escala junto.",
       },
       {
         title: "Processo manual que consome o dia",
-        desc: "Tarefas repetidas na mão tomam horas que deveriam ser da operação.",
+        desc: "Horas da equipe vão pra tarefa repetida que um sistema faria sozinho — e que só cresce com a operação.",
       },
       {
         title: "Ferramenta pronta que não encaixa",
-        desc: "O sistema genérico obriga a equipe a se adaptar a ele, não o contrário.",
+        desc: "O software genérico obriga a operação a se moldar a ele. Você adapta o processo à ferramenta, não o contrário.",
       },
       {
         title: "Sistema caro cheio de contorno",
-        desc: "Você paga caro e ainda precisa de gambiarra pra ele servir na rotina.",
+        desc: "Licença cara e, mesmo assim, uma camada de contornos manuais pra ele servir na rotina real.",
       },
       {
         title: "Informação espalhada",
-        desc: "Dados em planilhas, e-mails e mensagens, sem um lugar único e confiável.",
+        desc: "Dados em planilhas, e-mails e mensagens. Nenhuma fonte única, nenhuma leitura confiável pra decidir.",
       },
       {
         title: "Operação dependente de pessoas",
-        desc: "Se a pessoa certa falta, o processo trava — o conhecimento não está na ferramenta.",
+        desc: "O conhecimento vive na cabeça de quem opera, não no sistema. Quando essa pessoa falta, a operação trava.",
       },
     ],
   },
@@ -69,8 +71,8 @@ export const pt = {
   thesis: {
     label: "A virada",
     title:
-      "Uma ferramenta sob medida não começa pela tecnologia. Começa pelo entendimento da operação.",
-    body: "Antes de escolher tela, stack ou funcionalidade, a Solvy entende como sua empresa trabalha, onde o processo trava e o que precisa ser construído para o sistema fazer sentido na rotina.",
+      "Software sob medida não começa pela tecnologia. Começa pelo entendimento da operação.",
+    body: "Antes de tela, stack ou funcionalidade, a Solvy mapeia como a operação roda, onde ela trava sob carga e o que precisa existir pra ela escalar sem depender de improviso. A tecnologia vem depois — e por isso encaixa.",
     highlight: "entendimento da operação",
   },
 
@@ -154,27 +156,27 @@ export const pt = {
 
   comparison: {
     label: "Por que sob medida",
-    title: "Software pronto resolve até certo ponto. Depois, ele vira o gargalo.",
+    title: "Software pronto resolve até certo ponto. Depois, vira o gargalo que segura a operação.",
     generic: {
       heading: "Software genérico",
       points: [
-        "Obriga adaptação",
-        "Ignora exceções",
-        "Cria contornos",
+        "Obriga a operação a se moldar",
+        "Ignora suas exceções",
+        "Acumula contornos manuais",
         "Resolve pela metade",
-        "Vira mais uma camada",
-        "A empresa trabalha para o sistema",
+        "Vira mais uma camada pra manter",
+        "A operação trabalha pro sistema",
       ],
     },
     custom: {
       heading: "Software sob medida",
       points: [
-        "Parte da realidade",
-        "Considera as exceções",
-        "Reduz retrabalho",
-        "Centraliza o fluxo",
-        "Dá controle",
-        "O sistema trabalha para a empresa",
+        "Parte da operação real",
+        "Absorve as exceções",
+        "Reduz retrabalho e risco",
+        "Centraliza o fluxo e o controle",
+        "Escala junto com a empresa",
+        "O sistema trabalha pra operação",
       ],
     },
   },
@@ -182,17 +184,17 @@ export const pt = {
   founders: {
     label: "Dois sócios técnicos no projeto",
     title: "Você fala com quem pensa, desenha e constrói.",
-    body: "Na Solvy o projeto não passa por uma esteira cheia de camadas. Sem terceirização, sem intermediário, sem júnior tocando o que importa.",
+    body: "O decisor fala direto com quem arquiteta e escreve o código. Sem esteira de camadas, sem telefone-sem-fio, sem terceirização. Menos intermediário é menos risco — e decisão técnica em horas, não em semanas.",
     people: [
       {
         name: "Pedro",
         role: "Designer-desenvolvedor sênior · 15 anos",
-        desc: "Design, frontend, produto e relação com o cliente.",
+        desc: "Design, frontend, produto e a relação direta com quem decide.",
       },
       {
         name: "Neto",
         role: "Desenvolvedor backend",
-        desc: "Arquitetura técnica, infraestrutura e backend.",
+        desc: "Arquitetura, infraestrutura e sistemas que aguentam carga.",
       },
     ],
   },
@@ -264,36 +266,36 @@ export const pt = {
     title: "Se você se reconhece aqui, dá pra resolver.",
     items: [
       {
-        situation: "“Dependo de planilhas demais.”",
-        tool: "Um sistema próprio que centraliza o que hoje está espalhado.",
+        situation: "“Minha operação trava quando alguém-chave falta.”",
+        tool: "Um sistema próprio que tira o conhecimento da cabeça das pessoas e coloca na operação.",
       },
       {
-        situation: "“Meu processo comercial está manual.”",
-        tool: "Uma ferramenta que organiza o funil e tira o controle da cabeça das pessoas.",
+        situation: "“Meu comercial roda no manual e eu não enxergo o funil.”",
+        tool: "Uma ferramenta que organiza o funil e dá leitura do que está pra fechar.",
       },
       {
-        situation: "“Tenho ferramentas que não conversam.”",
-        tool: "Integrações que fazem os dados fluírem sem digitação dupla.",
+        situation: "“Minhas ferramentas não conversam e a equipe digita tudo duas vezes.”",
+        tool: "Integrações que fazem os dados fluírem sem digitação dupla nem erro manual.",
       },
       {
-        situation: "“Preciso de um painel pra controlar a operação.”",
-        tool: "Um dashboard com a leitura real do que está acontecendo.",
+        situation: "“Não tenho leitura em tempo real pra decidir.”",
+        tool: "Um painel com a leitura real da operação, na hora da decisão.",
       },
       {
-        situation: "“Tenho uma ideia presa no improviso.”",
-        tool: "Um produto digital tirado do papel com visão de produto e técnica.",
+        situation: "“Tenho um produto digital pra tirar do papel e fazer direito.”",
+        tool: "Um produto sob medida tirado do improviso, com visão de produto e engenharia.",
       },
       {
-        situation: "“Meu sistema não acompanha mais a empresa.”",
-        tool: "Reorganização ou reconstrução do que travou.",
+        situation: "“Meu sistema atual não acompanha mais o tamanho da empresa.”",
+        tool: "Reconstrução ou evolução do que travou — sem recomeçar do zero à toa.",
       },
       {
-        situation: "“Minha equipe faz retrabalho.”",
-        tool: "Uma ferramenta que trabalha a favor da operação, não contra.",
+        situation: "“Minha equipe gasta o dia em retrabalho que dava pra automatizar.”",
+        tool: "Um sistema que trabalha a favor da operação, não contra ela.",
       },
       {
-        situation: "“Meu fluxo vive em mensagens soltas.”",
-        tool: "Um sistema que dá forma ao processo.",
+        situation: "“Meu processo vive em mensagem solta, sem rastro.”",
+        tool: "Um sistema que dá forma e rastro ao processo, do início ao fim.",
       },
     ],
   },
@@ -301,12 +303,12 @@ export const pt = {
   proposal: {
     label: "Método de proposta",
     title: "A gente não vende pacote de horas.",
-    body: "Entendemos o que precisa ser construído, organizamos o escopo, definimos prazo e valor — e trabalhamos para entregar a ferramenta funcionando. O foco é a entrega, não o relógio.",
+    body: "Entendemos o que precisa ser construído, fechamos escopo, prazo e valor por escrito — e entregamos o sistema funcionando. Você paga por resultado em produção, não por hora no relógio.",
   },
 
   finalCta: {
-    title: "Tem um processo que precisa virar ferramenta?",
-    sub: "Quando a operação começa a depender do improviso, software sob medida deixa de ser luxo. Vamos entender como sua empresa funciona e construir o sistema que cabe nela.",
+    title: "Tem um processo crítico que ainda depende de improviso?",
+    sub: "Conta como sua operação funciona hoje e onde ela trava. A gente devolve um caminho claro: o que dá pra construir, em quanto tempo e por quê.",
     ctaPrimary: "Falar sobre meu projeto",
     ctaSecondary: "Ver como trabalhamos",
   },
@@ -319,7 +321,7 @@ export const pt = {
       message: "Como sua operação funciona hoje e onde ela trava?",
       submit: "Falar sobre meu projeto",
       whatsapp: "Falar no WhatsApp",
-      success: "Recebido. A gente volta com um caminho claro em breve.",
+      success: "Recebido. Voltamos com um caminho claro: o que dá pra construir, prazo e valor.",
     },
   },
 
