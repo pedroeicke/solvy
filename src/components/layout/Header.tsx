@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { content } from "@/content";
+import Button from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export default function Header() {
@@ -23,9 +25,7 @@ export default function Header() {
           : "border-b border-transparent py-6"
       )}
     >
-      {/* Só o logo. A navegação agora vive no NavOverlay (hambúrguer
-          fullscreen no canto sup. direito). */}
-      <div className="mx-auto flex max-w-[1240px] items-center px-6 md:px-10">
+      <div className="mx-auto flex max-w-[1240px] items-center justify-between px-6 md:px-10">
         <a href="#top" aria-label="Solvy" className="flex items-center">
           <Image
             src="/brand/logobranca.png"
@@ -36,6 +36,20 @@ export default function Header() {
             className="h-7 w-auto md:h-[30px]"
           />
         </a>
+        <nav className="hidden items-center gap-9 md:flex">
+          {content.header.nav.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="text-sm text-muted transition-colors hover:text-fg"
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
+        <Button href="#contato" className="px-5 py-2.5 text-sm">
+          {content.header.cta}
+        </Button>
       </div>
     </header>
   );
