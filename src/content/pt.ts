@@ -17,10 +17,10 @@ export const pt = {
 
   header: {
     nav: [
-      { label: "Método", href: "#metodo" },
-      { label: "Construímos", href: "#construimos" },
-      { label: "Cases", href: "#cases" },
-      { label: "Processo", href: "#processo" },
+      { label: "O problema", href: "#problema" },
+      { label: "O que fazemos", href: "#servicos" },
+      { label: "Como trabalhamos", href: "#processo" },
+      { label: "Por que Solvy", href: "#comparacao" },
     ],
     cta: "Falar sobre meu projeto",
   },
@@ -66,9 +66,6 @@ export const pt = {
     ],
   },
 
-  // "A virada" (thesis) foi absorvida pelo Manifesto + Method.
-  // Mantido aqui pra retrocompatibilidade com ThesisSection que pode ainda
-  // estar referenciado em algum lugar - mas no page.tsx novo nao usa mais.
   thesis: {
     label: "A virada",
     title:
@@ -77,188 +74,43 @@ export const pt = {
     highlight: "entendimento da operação",
   },
 
-  manifesto: {
-    preface: "Você não deve se adaptar ao software.",
-    headline: "O software deve se adaptar a você.",
-    highlight: "você",
-    subhead: "Software sob medida. Feito para sua operação.",
-  },
-
-  metodo: {
-    eyebrow: "Método",
-    headline: "Como a Solvy trabalha",
-    subhead:
-      "Antes da primeira linha de código, vêm 4 conversas. Software sob medida não começa pela tecnologia — começa pelo entendimento da operação.",
-    items: [
-      {
-        number: "01",
-        title: "Quem decide está na sala",
-        description:
-          "Arquitetura, código e produto saem da mesma cabeça. Decisões técnicas acontecem em horas, não em sprints.",
-      },
-      {
-        number: "02",
-        title: "Código que dura mais que o contrato",
-        description:
-          "Stack moderna, documentada, manutenível. Vocês não ficam reféns de quem escreveu.",
-      },
-      {
-        number: "03",
-        title: "Escopo claro, evolução real",
-        description:
-          "Priorização prática, entregas iterativas e decisões transparentes do início ao fim.",
-      },
-      {
-        number: "04",
-        title: "Construção com parceria",
-        description:
-          "Você fala com quem resolve. Ajustes, decisões e alinhamento sem ruído.",
-      },
-    ],
-    editorial:
-      "Não é cult de metodologia. É o que sobrevive depois de 15 anos entregando projetos.",
-    closing: "Cada projeto começa com uma conversa franca.",
-    cta: { label: "Falar sobre meu projeto", href: "#contato" },
-  },
-
-  interludio1: {
-    imageAlt:
-      "Artesão concentrado em ofício, fotografado em luz cinematográfica",
-    image: "/photos/interlude-1.jpg",
-    quote: "Não há atalho pro ofício. Há método.",
-    attribution: "— Solvy",
-  },
-
-  interludio2: {
-    imageAlt: "Mãos trabalhando em código, fotografadas em luz editorial",
-    image: "/photos/interlude-2.jpg",
-    quote: "Quem entrega é quem decide.",
-  },
-
-  processo: {
-    eyebrow: "Processo",
-    headline: "Seis etapas. Sem mistério.",
-    etapas: [
-      {
-        numero: "01",
-        titulo: "Escuta",
-        duracao: "1 semana",
-        descricao: "Conversa pra entender como a operação funciona hoje.",
-      },
-      {
-        numero: "02",
-        titulo: "Diagnóstico",
-        duracao: "1-2 semanas",
-        descricao: "Análise do gargalo e do fluxo real.",
-      },
-      {
-        numero: "03",
-        titulo: "Escopo",
-        duracao: "1 semana",
-        descricao: "O que entra, o que fica fora, prazo e valor.",
-      },
-      {
-        numero: "04",
-        titulo: "Build",
-        duracao: "4-16 semanas",
-        descricao:
-          "Design e engenharia juntos, do primeiro ao último commit.",
-      },
-      {
-        numero: "05",
-        titulo: "Deploy",
-        duracao: "1 semana",
-        descricao: "Entrega em produção, pronta pra uso.",
-      },
-      {
-        numero: "06",
-        titulo: "Sustentação",
-        duracao: "Contrato à parte",
-        descricao: "Manutenção e evolução, quando fizer sentido.",
-        opcional: true,
-      },
-    ],
-    closing: "Cronograma real, validado em escopo escrito.",
-  },
-
-  stack: {
-    eyebrow: "Como construímos",
-    principios: [
-      "Stack moderna, sem hype.",
-      "Code review, testes, observabilidade.",
-      "Documentação que dura.",
-    ],
-    tecnologias: [
-      "TypeScript",
-      "Next.js",
-      "React",
-      "Supabase",
-      "PostgreSQL",
-      "Vercel",
-      "AWS",
-      "Docker",
-    ],
-    closing: "Tecnologia é meio. Não fim.",
-  },
-
-  socios: {
-    eyebrow: "Quem",
-    headline: "Você fala com quem pensa, desenha e constrói.",
-    editorial:
-      "Sem terceirização. Sem intermediário. Sem júnior tocando o que importa.",
-    pessoas: [
-      {
-        nome: "Pedro",
-        cargo: "Design, frontend e produto",
-        bio: "15 anos construindo produtos digitais.",
-        foto: "/team/pedro.jpg",
-        linkedin: "https://linkedin.com/in/pedroeicke",
-      },
-      {
-        nome: "Neto",
-        cargo: "Backend, arquitetura e infraestrutura",
-        bio: "Sistemas que escalam e duram.",
-        foto: "/team/neto.jpg",
-        linkedin: "https://linkedin.com",
-      },
-    ],
-  },
-
   services: {
-    label: "Construímos",
-    title: "Projetos descritos pela função. Não pela stack.",
+    label: "O que a gente constrói",
+    title: "Projetos descritos pela função, não pela stack.",
     intro:
       "Descrevemos cada projeto pela função que ele cumpre na operação — não pela tecnologia por trás.",
     items: [
       {
-        icon: "sistemas-internos",
         title: "Sistemas internos",
-        desc: "ERPs, controles e ferramentas operacionais sob medida.",
+        desc: "Organizam o que hoje vive em planilha e na cabeça das pessoas.",
       },
       {
-        icon: "plataformas-portais",
-        title: "Plataformas e portais",
-        desc: "Áreas logadas para clientes, equipes e parceiros.",
-      },
-      {
-        icon: "dashboards",
         title: "Dashboards operacionais",
-        desc: "Leitura em tempo real do que importa pra decisão.",
+        desc: "Dão a leitura real do que está acontecendo na operação.",
       },
       {
-        icon: "automacoes",
-        title: "Automações e integrações",
-        desc: "Processos manuais que viram fluxo. Sistemas que conversam.",
+        title: "Automações de processo",
+        desc: "Tiram o trabalho repetitivo do caminho da equipe.",
       },
       {
-        icon: "produtos-digitais",
+        title: "Integrações entre ferramentas",
+        desc: "Fazem sistemas separados conversarem, sem digitação dupla.",
+      },
+      {
+        title: "Portais para clientes e equipes",
+        desc: "Centralizam o que hoje se resolve por mensagem solta.",
+      },
+      {
         title: "Produtos digitais sob medida",
-        desc: "SaaS, marketplaces e plataformas próprias.",
+        desc: "Tiram a ideia do improviso com visão de produto e técnica.",
       },
       {
-        icon: "recuperacao",
         title: "Recuperação de projetos",
-        desc: "Sistemas legados ou travados. Retomamos o que parou.",
+        desc: "Reorganizam ou reconstroem o que travou no meio do caminho.",
+      },
+      {
+        title: "Substituição de planilhas críticas",
+        desc: "Trocam o controle frágil por uma ferramenta confiável.",
       },
     ],
   },
@@ -346,73 +198,63 @@ export const pt = {
   },
 
   portfolio: {
-    // Aliases legados (PortfolioSection antigo). Cases.tsx novo usa eyebrow/headline.
-    label: "Projetos",
+    label: "Projetos entregues",
     title: "O trabalho fala por si.",
-    eyebrow: "Projetos",
-    headline: "O trabalho fala por si.",
     body: "Sites institucionais, páginas de venda, plataformas SaaS. Cada caso foi pensado pela função que precisava cumprir — apresentar, vender, captar, demonstrar — e construído pra cumprir.",
-    featured: {
-      slug: "pregoeiros-summit",
-      name: "Pregoeiros Summit",
-      role: "Evento · Compras públicas",
-      tagline:
-        "Página de vendas e checkout integrado do maior evento de compras públicas do Brasil.",
-      stats: [
-        { number: "1.200+", label: "Inscritos no primeiro ano" },
-        { number: "R$ 850k", label: "Faturamento em vendas online" },
-        { number: "94%", label: "Conclusão de checkout" },
-      ],
-      src: "/cases/eeeb53776dc7e8529526a32d8eea6ee2.png",
-      alt: "Página de vendas do Pregoeiros Summit construída pela Solvy",
-      href: "/cases/pregoeiros-summit",
-    },
     items: [
       {
-        slug: "ceap-brasil",
         name: "CEAP Brasil",
         role: "Institucional · Educação",
         description:
-          "Site, cursos e captação organizada.",
-        href: "/cases/ceap-brasil",
+          "Site institucional com agenda de cursos, eventos e captação organizada de inscritos.",
+        href: "",
         src: "/cases/bc26980ab4de0726dc4bb292f6fb3254.png",
         alt: "Site institucional CEAP Brasil construído pela Solvy",
       },
       {
-        slug: "legisativo",
-        name: "Plataforma LegisAtivo",
-        role: "SaaS · Legislativo",
-        description: "Plataforma SaaS legislativa com funil qualificado.",
-        href: "/cases/legisativo",
-        src: "/cases/e9e225e8665a89311cc35fa071e62ab3.png",
-        alt: "Página da Plataforma LegisAtivo construída pela Solvy",
-      },
-      {
-        slug: "cavalos-marinhos",
         name: "Projeto Cavalos-Marinhos",
-        role: "Científico · Divulgação",
-        description: "Apresentação e captação de apoiadores.",
-        href: "/cases/cavalos-marinhos",
+        role: "Projeto científico · Divulgação",
+        description:
+          "Apresentação do projeto, divulgação científica e canal direto pra captação de apoiadores.",
+        href: "",
         src: "/cases/c68e9dc1d220af2fb5358fe9bb30e787.png",
         alt: "Site do Projeto Cavalos-Marinhos construído pela Solvy",
       },
       {
-        slug: "secomp-rj",
-        name: "SECOMP RJ",
-        role: "Evento acadêmico · Inscrições",
-        description: "Inscrições e programação do evento.",
-        href: "/cases/secomp-rj",
-        src: "/cases/Generated%20Image%20November%2016,%202025%20-%201_37PM.png",
-        alt: "Página da SECOMP RJ construída pela Solvy",
+        name: "Plataforma LegisAtivo",
+        role: "SaaS · Legislativo",
+        description:
+          "Demonstração do sistema legislativo e funil organizado de leads qualificados para o time comercial.",
+        href: "",
+        src: "/cases/e9e225e8665a89311cc35fa071e62ab3.png",
+        alt: "Página da Plataforma LegisAtivo construída pela Solvy",
       },
       {
-        slug: "villa-das-alamandas",
         name: "Villa das Alamandas",
         role: "Hospedagem · Reservas",
-        description: "Apresentação e reserva direta.",
-        href: "/cases/villa-das-alamandas",
+        description:
+          "Apresentação do espaço, destaque da experiência premium e canal de reserva direta sem intermediário.",
+        href: "",
         src: "/cases/9cb47ef2cd7d02cbd918ad9d8de8316a.png",
         alt: "Site da Villa das Alamandas construído pela Solvy",
+      },
+      {
+        name: "Pregoeiros Summit",
+        role: "Evento · Compras públicas",
+        description:
+          "Página de vendas do maior evento de compras públicas do Brasil — programação, pacotes e checkout integrado.",
+        href: "",
+        src: "/cases/eeeb53776dc7e8529526a32d8eea6ee2.png",
+        alt: "Página de vendas do Pregoeiros Summit construída pela Solvy",
+      },
+      {
+        name: "SECOMP RJ",
+        role: "Evento acadêmico · Inscrições",
+        description:
+          "Inscrições, programação e apresentação dos módulos do evento acadêmico, com fluxo claro para o participante.",
+        href: "",
+        src: "/cases/Generated%20Image%20November%2016,%202025%20-%201_37PM.png",
+        alt: "Página da SECOMP RJ construída pela Solvy",
       },
     ],
   },
@@ -464,17 +306,9 @@ export const pt = {
 
   finalCta: {
     title: "Tem um processo que precisa virar ferramenta?",
-    sub: "Conta como sua operação funciona. A gente diz o que dá pra construir.",
+    sub: "Quando a operação começa a depender do improviso, software sob medida deixa de ser luxo. Vamos entender como sua empresa funciona e construir o sistema que cabe nela.",
     ctaPrimary: "Falar sobre meu projeto",
-    ctaSecondary: "Falar no WhatsApp",
-    logoWallLabel: "Confiam na Solvy",
-    logos: [
-      { name: "CEAP Brasil", file: "/logos/ceap.svg" },
-      { name: "Pregoeiros Summit", file: "/logos/pregoeiros.svg" },
-      { name: "Instituto Plenum", file: "/logos/plenum.svg" },
-      { name: "Cavalos-Marinhos", file: "/logos/cavalos-marinhos.svg" },
-      { name: "SECOMP RJ", file: "/logos/secomp-rj.svg" },
-    ],
+    ctaSecondary: "Ver como trabalhamos",
   },
 
   contact: {
