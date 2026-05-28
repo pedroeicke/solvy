@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { content } from "@/content";
 import Button from "@/components/ui/Button";
+import Magnet from "@/components/motion/Magnet";
 import { cn } from "@/lib/utils";
 
 export default function Header() {
@@ -41,15 +42,18 @@ export default function Header() {
             <a
               key={l.href}
               href={l.href}
+              data-cursor="hover"
               className="text-sm text-muted transition-colors hover:text-fg"
             >
               {l.label}
             </a>
           ))}
         </nav>
-        <Button href="#contato" className="px-5 py-2.5 text-sm">
-          {content.header.cta}
-        </Button>
+        <Magnet data-cursor="hover">
+          <Button href="#contato" className="px-5 py-2.5 text-sm">
+            {content.header.cta}
+          </Button>
+        </Magnet>
       </div>
     </header>
   );

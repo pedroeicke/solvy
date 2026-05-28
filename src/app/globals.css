@@ -138,6 +138,48 @@ html.lenis body {
 /* Reveal: conteudo SEMPRE visivel por padrao. O GSAP esconde so quando
    o trigger ativa (immediateRender:false). Nunca fica preso invisivel. */
 
+/* Cursor custom (Cursor.tsx). Escondido em telas touch. */
+.solvy-cursor-ring,
+.solvy-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+.solvy-cursor-ring {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+}
+.solvy-cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 9999px;
+}
+.solvy-cursor-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #fff;
+  opacity: 0;
+  user-select: none;
+}
+@media (pointer: coarse) {
+  .solvy-cursor-ring,
+  .solvy-cursor-dot {
+    display: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

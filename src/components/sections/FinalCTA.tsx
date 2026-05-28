@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { content } from "@/content";
 import Button from "@/components/ui/Button";
+import Magnet from "@/components/motion/Magnet";
 import Reveal from "@/components/motion/Reveal";
 import Marquee from "@/components/motion/Marquee";
 
@@ -112,12 +113,16 @@ export default function FinalCTA() {
                 onChange={set("message")}
               />
               <div className="flex flex-wrap gap-4 pt-1">
-                <Button type="submit">
-                  {loading ? "Enviando…" : contact.form.submit}
-                </Button>
-                <Button variant="secondary" onClick={whatsapp}>
-                  {contact.form.whatsapp}
-                </Button>
+                <Magnet data-cursor="hover">
+                  <Button type="submit">
+                    {loading ? "Enviando…" : contact.form.submit}
+                  </Button>
+                </Magnet>
+                <Magnet data-cursor="hover">
+                  <Button variant="secondary" onClick={whatsapp}>
+                    {contact.form.whatsapp}
+                  </Button>
+                </Magnet>
               </div>
             </form>
           )}
