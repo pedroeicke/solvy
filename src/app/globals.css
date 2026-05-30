@@ -180,11 +180,43 @@ html.lenis body {
   }
 }
 
+/* Marquee de depoimentos (TestimonialsSection). Track duplicado [...x2]
+   -> translateX(-50%) faz o loop costurar sem salto. --duration controla
+   a velocidade de cada linha; direções opostas pelas duas classes. */
+@keyframes scroll-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes scroll-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.animate-scroll-left {
+  animation: scroll-left var(--duration, 50s) linear infinite;
+}
+.animate-scroll-right {
+  animation: scroll-right var(--duration, 60s) linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+  /* marquee PARA de vez (o reset global acima só aceleraria o loop) */
+  .animate-scroll-left,
+  .animate-scroll-right {
+    animation: none !important;
+    transform: none !important;
   }
 }

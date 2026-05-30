@@ -1,0 +1,143 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { content } from "@/content";
+
+// ============================================================
+// Skiper35 — "Hover expand" (Skiper UI). Painéis horizontais que
+// expandem em LARGURA no hover/foco (spring), revelando a imagem do
+// case; os colapsados mostram só o título rotacionado (-90°) + a
+// categoria quando ativo. Mecânica original do Skiper35, adaptada ao
+// tema dark Solvy e alimentada por content.portfolio.items (cases
+// reais). Mobile cai num stack (a versão oficial não trata mobile).
+// ============================================================
+
+type SkiperItem = {
+  name: string;
+  role: string;
+  description: string;
+  src: string;
+  href?: string;
+  alt?: string;
+};
+
+// Painel colapsado = base fixa; o ativo cresce (flexGrow) e preenche a
+// largura toda da tela -> galeria ponta a ponta em qualquer resolução.
+const COLLAPSED = "4rem";
+
+export default function Skiper35({
+  items = content.portfolio.items,
+}: {
+  items?: readonly SkiperItem[];
+}) {
+  const [active, setActive] = useState(0);
+
+  return (
+    <>
+      {/* DESKTOP — expand horizontal (mecânica original do Skiper35) */}
+      <div className="hidden h-[80vh] w-full overflow-hidden md:block">
+        <div className="flex h-full w-full">
+          {items.map((p, i) => {
+            const isActive = active === i;
+            return (
+              <motion.a
+                key={p.name}
+                href={p.href || undefined}
+                aria-label={`${p.name} — ${p.role}`}
+                onHoverStart={() => setActive(i)}
+                onFocus={() => setActive(i)}
+                onClick={() => setActive(i)}
+                animate={{ flexGrow: isActive ? 1 : 0 }}
+                transition={{ type: "spring", stiffness: 120, damping: 20 }}
+                style={{ height: "100%", flexBasis: COLLAPSED, flexShrink: 0 }}
+                className="relative h-full cursor-pointer border-r border-line last:border-r-0 focus:outline-none"
+              >
+                {/* imagem do case (revelada quando ativo) */}
+                <motion.div
+                  animate={{ opacity: isActive ? 1 : 0 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="h-full p-[1.2vw] md:pl-[3.5vw]"
+                >
+                  <div className="relative h-full w-full overflow-hidden rounded-xl border border-line">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={p.src}
+                      alt={p.alt || p.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </motion.div>
+
+                {/* título vertical (-90°) + categoria quando ativo */}
+                <div
+                  className="display-tight absolute bottom-0 left-[2vw] flex w-[calc(80vh_-_2.6vw)] origin-[0_50%] -rotate-90 justify-between pr-5 text-[2vw] font-medium leading-[2.6vw] tracking-[-0.03em]"
+                  style={{
+                    color: isActive
+                      ? "var(--solvy-fg)"
+                      : "rgba(247,249,252,0.3)",
+                  }}
+                >
+                  <p className="whitespace-nowrap">{p.name}</p>
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.p
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        transition={{ duration: 0.3 }}
+                        className="whitespace-nowrap text-blue-light"
+                      >
+                        {p.role}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.a>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* MOBILE / TOUCH — stack */}
+      <div className="grid grid-cols-1 gap-4 px-6 md:hidden">
+        {items.map((item) => (
+          <a
+            key={item.name}
+            href={item.href || undefined}
+            aria-label={`${item.name} — ${item.role}`}
+            className="relative block h-56 overflow-hidden rounded-2xl border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-light"
+          >
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url("${item.src}")`,
+                backgroundColor: "#0a4a86",
+              }}
+            />
+            <div aria-hidden className="absolute inset-0 bg-bg/50" />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3"
+              style={{
+                background:
+                  "linear-gradient(to top, rgba(3,3,5,0.92), transparent)",
+              }}
+            />
+            <div className="absolute inset-0 flex flex-col justify-end p-5">
+              <p className="mb-1.5 text-xs uppercase tracking-widest text-blue-light">
+                {item.role}
+              </p>
+              <h3 className="display-tight text-xl font-medium text-fg">
+                {item.name}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">
+                {item.description}
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </>
+  );
+}

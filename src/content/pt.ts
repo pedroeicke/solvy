@@ -69,111 +69,226 @@ export const pt = {
   },
 
   thesis: {
-    label: "A virada",
+    label: "Nosso movimento",
     title:
       "Software sob medida não começa pela tecnologia. Começa pelo entendimento da operação.",
-    body: "Antes de tela, stack ou funcionalidade, a Solvy mapeia como a operação roda, onde ela trava sob carga e o que precisa existir pra ela escalar sem depender de improviso. A tecnologia vem depois — e por isso encaixa.",
+    body: "A Solvy não entrega código por hora. Entende como a operação roda, onde ela trava sob carga e o que precisa existir pra ela escalar sem depender de improviso. A tecnologia vem depois — e por isso encaixa.",
     highlight: "entendimento da operação",
+    stats: [
+      { value: "+100", label: "Projetos publicados" },
+      { value: "+15", label: "Anos de experiência" },
+      { value: "100%", label: "Construído por quem decide" },
+    ],
+    note: "Números ilustrativos — Pedro ajusta depois.",
+  },
+
+  metodo: {
+    label: "Método",
+    title: "Como a Solvy trabalha",
+    intro:
+      "Quatro princípios que valem pra todo projeto — do primeiro contato à entrega em produção. Menos intermediário, mais clareza, software que dura.",
+    cta: "Falar sobre meu projeto",
+    principios: [
+      {
+        n: "01",
+        title: "Quem decide está na sala.",
+        desc: "Arquitetura, código e produto saem da mesma cabeça. Decisões técnicas acontecem em horas, não em sprints.",
+        quote: "Sem intermediário entre a ideia e a entrega.",
+        image: "/metodo/principio-01.png",
+        iconIndex: 0,
+      },
+      {
+        n: "02",
+        title: "Código que dura mais que o contrato.",
+        desc: "Stack moderna, documentada, manutenível. Vocês não ficam reféns de quem escreveu.",
+        quote: "Construído pra durar, não pra entregar e sumir.",
+        image: "/metodo/principio-02.png",
+        iconIndex: 1,
+      },
+      {
+        n: "03",
+        title: "Escopo claro, evolução real.",
+        desc: "Priorização prática, entregas iterativas e decisões transparentes do início ao fim.",
+        quote: "Você sempre sabe onde o projeto está.",
+        image: "/metodo/principio-03.png",
+        iconIndex: 2,
+      },
+      {
+        n: "04",
+        title: "Construção com parceria.",
+        desc: "Você fala com quem resolve. Ajustes, decisões e alinhamento sem ruído.",
+        quote: "Um time só, do briefing ao deploy.",
+        image: "/metodo/principio-04.png",
+        iconIndex: 3,
+      },
+    ],
   },
 
   services: {
-    label: "O que a gente constrói",
-    title: "Projetos descritos pela função, não pela stack.",
-    intro:
-      "Descrevemos cada projeto pela função que ele cumpre na operação — não pela tecnologia por trás.",
+    label: "O que construímos",
+    title: "Descritos pelos problemas que resolvem, não pela tecnologia.",
+    intro: "Descritos pelos problemas que resolvem, não pela tecnologia.",
     items: [
       {
-        title: "Sistemas internos",
-        desc: "Organizam o que hoje vive em planilha e na cabeça das pessoas.",
+        title: "Sistema sob medida",
+        iconIndex: 0,
+        trigger:
+          "Pra quando a planilha virou o sistema da empresa — e já não dá conta.",
+        desc: "O pedido entra por um canal, o pagamento confirma por outro, e a produção começa antes da hora — porque ninguém viu que o cliente ainda não pagou. Some um valor, ninguém sabe em qual etapa. Construímos o sistema onde cada estado conversa: o que foi pedido, o que foi pago, o que pode entrar em produção. Num lugar só, na regra da sua operação — não numa genérica que você passa o dia contornando.",
+        result:
+          "O estado real da operação à vista — sem perguntar pra ninguém onde parou.",
       },
       {
-        title: "Dashboards operacionais",
-        desc: "Dão a leitura real do que está acontecendo na operação.",
+        title: "Plataforma e produto digital",
+        iconIndex: 1,
+        trigger:
+          "Pra quando você não precisa de uma ferramenta interna — precisa de um produto.",
+        desc: "Não é um sistema pra sua equipe usar. É um produto que seus clientes acessam, cada um vendo só o que é dele, sem nunca esbarrar no dado do outro. A câmara que tramita projeto de lei com assinatura ICP-Brasil valendo no PDF. A escola que roda o curso inteiro com a marca dela, não com a nossa. Construímos a plataforma multiusuário inteira — e ela aguenta o centésimo cliente do mesmo jeito que aguentou o primeiro.",
+        result:
+          "Cada cliente isolado no que é dele, a base inteira sob seu controle.",
       },
       {
-        title: "Automações de processo",
-        desc: "Tiram o trabalho repetitivo do caminho da equipe.",
+        title: "Automação e IA",
+        iconIndex: 2,
+        trigger:
+          "Pra quando a rotina repetida consome horas que deviam ser da operação.",
+        desc: "O cliente manda áudio no WhatsApp às 23h perguntando preço. De manhã, o lead já está respondido, classificado e na fila certa — sem ninguém ter aberto o celular. Montamos atendentes de IA que entendem o contexto, qualificam e registram. E ligamos as ferramentas que hoje não se falam, pra o trabalho de copiar de uma tela e colar na outra simplesmente sumir.",
+        result: "A operação cuida do que importa; o repetível roda sozinho.",
       },
       {
-        title: "Integrações entre ferramentas",
-        desc: "Fazem sistemas separados conversarem, sem digitação dupla.",
+        title: "Recuperação de projeto",
+        iconIndex: 3,
+        trigger: "Pra quando o sistema travou no meio do caminho.",
+        desc: "O fornecedor sumiu, o código não tem documentação, e mexer em qualquer coisa dá medo de quebrar o que ainda funciona. Assumimos o que existe: lemos o código herdado, documentamos o que estava só na cabeça de quem saiu, estabilizamos e devolvemos a evolução. Recomeçar do zero é caro e quase nunca necessário — só parece, quando ninguém entende mais o sistema.",
+        result: "Você volta a evoluir o que já investiu — sem jogar fora.",
       },
       {
-        title: "Portais para clientes e equipes",
-        desc: "Centralizam o que hoje se resolve por mensagem solta.",
-      },
-      {
-        title: "Produtos digitais sob medida",
-        desc: "Tiram a ideia do improviso com visão de produto e técnica.",
-      },
-      {
-        title: "Recuperação de projetos",
-        desc: "Reorganizam ou reconstroem o que travou no meio do caminho.",
-      },
-      {
-        title: "Substituição de planilhas críticas",
-        desc: "Trocam o controle frágil por uma ferramenta confiável.",
+        title: "Site e landing",
+        iconIndex: 4,
+        trigger: "Pra quando o lançamento não pode parecer template.",
+        desc: "Não é tema de prateleira com a logo trocada. Construímos a interface do zero: animação que responde ao scroll, 3D rodando no navegador, tipografia editorial, e a página carregando rápido mesmo cheia de efeito. O site do evento que faz a pessoa parar antes de comprar o ingresso. A landing do produto que parece feita à mão — porque foi.",
+        result: "A primeira impressão que não dá pra comprar pronta.",
       },
     ],
   },
 
   proof: {
-    label: "Prova",
-    title: "Projetos no ar, operação real.",
-    stats: [
+    label: "Solvy em números",
+    title: "Operação real, no ar, em produção.",
+    items: [
       {
+        prefix: "+",
         value: 12000,
-        suffix: "+",
-        label: "inscritos processados em eventos que construímos",
+        suffix: "",
+        unit: "Inscritos",
+        desc: "Processados em plataformas de eventos que construímos.",
       },
-      { value: 6, suffix: "", label: "plataformas em produção" },
       {
+        prefix: "+",
+        value: 6,
+        suffix: "",
+        unit: "Plataformas",
+        desc: "Em produção, sustentadas pela Solvy.",
+      },
+      {
+        prefix: "",
         value: 99.9,
         suffix: "%",
-        label: "uptime nas aplicações que sustentamos",
+        unit: "Uptime",
+        desc: "Disponibilidade nas aplicações que mantemos.",
       },
       {
+        prefix: "+",
         value: 15,
-        suffix: " anos",
-        label: "de experiência no comando do projeto",
+        suffix: "",
+        unit: "Anos",
+        desc: "De experiência no comando do projeto.",
       },
     ],
-    note: "Números ilustrativos — substituir pelos reais.",
+    note: "Números ilustrativos — Pedro substitui pelos reais.",
+  },
+
+  trusted: {
+    label: "Quem confia na Solvy",
+    title: "Empresas e instituições que já construíram com a gente.",
+    // mono: true => filtro branco (logos escuros que sumiriam no fundo).
+    // mono: false => mostra no original (ilustrações que ficam ruins em branco).
+    logos: [
+      { src: "/logos/logoceap.svg", alt: "CEAP Brasil", mono: true },
+      { src: "/logos/logocavalos.svg", alt: "Projeto Cavalos-Marinhos", mono: true },
+      { src: "/logos/logovilla.svg", alt: "Villa das Alamandas", mono: true },
+      { src: "/logos/logolicito.svg", alt: "Licito Guru", mono: true },
+      { src: "/logos/logoplataformafontep.svg", alt: "Fonte de Preços", mono: true },
+      { src: "/logos/superlistab.png", alt: "Superlista", mono: false },
+    ],
+    note: "Logos reais de public/logos/. Ajustar a lista conforme os clientes oficiais a destacar.",
   },
 
   process: {
     label: "Como trabalhamos",
     title: "Da escuta à sustentação.",
-    steps: [
+    intro:
+      "Todo projeto segue o mesmo caminho — e você fala com quem constrói em cada etapa. Primeiro a gente entende a operação. Só então a tecnologia entra. É por isso que ela encaixa: foi pensada nessa ordem.",
+    // 3 movimentos que agrupam os 6 passos (cada passo tem phase = key).
+    movements: [
       {
         n: "01",
-        name: "Escuta",
-        desc: "Primeira conversa para entender como a operação funciona hoje.",
+        key: "Entender",
+        lead: "Antes de qualquer tela, a operação. A gente escuta e diagnostica como tudo funciona de verdade — e onde trava sob carga.",
       },
       {
         n: "02",
-        name: "Diagnóstico",
-        desc: "Análise estruturada do gargalo, do fluxo e das necessidades reais.",
+        key: "Construir",
+        lead: "Só então a tecnologia entra. Escopo por escrito, build com produto e engenharia juntos, e entrega que vai pro ar.",
       },
       {
         n: "03",
+        key: "Sustentar",
+        lead: "Depois do ar, a ferramenta evolui junto com a operação — sem virar o próximo gargalo.",
+      },
+    ],
+    steps: [
+      {
+        n: "01",
+        phase: "Entender",
+        name: "Escuta",
+        desc: "Sentamos com quem opera e ouvimos como a coisa funciona de verdade hoje — não como o manual diz que deveria.",
+        result: "Você fala com quem vai construir, desde a primeira conversa.",
+      },
+      {
+        n: "02",
+        phase: "Entender",
+        name: "Diagnóstico",
+        desc: "Mapeamos o gargalo real, o fluxo e onde a operação trava sob carga. Separamos o sintoma da causa.",
+        result: "Clareza do problema antes de desenhar qualquer tela.",
+      },
+      {
+        n: "03",
+        phase: "Construir",
         name: "Escopo",
-        desc: "O que será construído, o que fica fora, prazo e valor.",
+        desc: "O que será construído, o que fica de fora, prazo e valor — por escrito, sem letra miúda.",
+        result: "Sem surpresa de escopo no meio do caminho.",
       },
       {
         n: "04",
+        phase: "Construir",
         name: "Build",
-        desc: "Desenvolvimento com visão de produto, design e engenharia juntos.",
+        desc: "Produto, design e engenharia na mesma cabeça. Decisão técnica em horas, não em semanas de aprovação.",
+        result: "Você acompanha a ferramenta tomar forma.",
       },
       {
         n: "05",
+        phase: "Construir",
         name: "Deploy",
-        desc: "Entrega em produção, pronta para uso.",
+        desc: "No ar, integrado à rotina e testado sob a carga real da operação.",
+        result: "Entra em produção — não para num slide.",
       },
       {
         n: "06",
+        phase: "Sustentar",
         name: "Sustentação",
-        desc: "Manutenção e evolução pós-entrega, quando fizer sentido.",
+        desc: "Depois do ar, a ferramenta evolui junto com a operação. Manutenção e melhorias quando faz sentido.",
+        result: "O sistema cresce com você, sem virar o próximo gargalo.",
       },
     ],
   },
@@ -181,46 +296,75 @@ export const pt = {
   comparison: {
     label: "Por que sob medida",
     title: "Software pronto resolve até certo ponto. Depois, vira o gargalo que segura a operação.",
-    generic: {
-      heading: "Software genérico",
-      points: [
-        "Obriga a operação a se moldar",
-        "Ignora suas exceções",
-        "Acumula contornos manuais",
-        "Resolve pela metade",
-        "Vira mais uma camada pra manter",
-        "A operação trabalha pro sistema",
-      ],
-    },
-    custom: {
-      heading: "Software sob medida",
-      points: [
-        "Parte da operação real",
-        "Absorve as exceções",
-        "Reduz retrabalho e risco",
-        "Centraliza o fluxo e o controle",
-        "Escala junto com a empresa",
-        "O sistema trabalha pra operação",
-      ],
-    },
+    generic: "Com software genérico, a operação trabalha pro sistema.",
+    custom: "Sob medida, o sistema trabalha pra você.",
   },
 
   founders: {
-    label: "Dois sócios técnicos no projeto",
+    label: "Quem constrói",
     title: "Você fala com quem pensa, desenha e constrói.",
     body: "O decisor fala direto com quem arquiteta e escreve o código. Sem esteira de camadas, sem telefone-sem-fio, sem terceirização. Menos intermediário é menos risco — e decisão técnica em horas, não em semanas.",
     people: [
       {
-        name: "Pedro",
-        role: "Designer-desenvolvedor sênior · 15 anos",
-        desc: "Design, frontend, produto e a relação direta com quem decide.",
+        name: "Pedro Augusto Eicke",
+        role: "Cofundador · Design, produto e experiência",
+        bio: "Sou neto e filho de publicitários da velha guarda. Meu avô, Roberto Eicke, foi eleito profissional do ano pela Globo. Assinei a identidade visual da licito.guru, a maior IA de licitações do país.",
+        work: "Aos 13 anos, fiz a direção de arte da premiação da Miró Propaganda. Atendi o setor público, como o CEAP Brasil, assinei a identidade do Pregoeiros Summit 2025 e, ao todo, já são mais de 40 sites publicados.",
+        image: "/pedro.png",
       },
       {
         name: "Neto",
-        role: "Desenvolvedor backend",
-        desc: "Arquitetura, infraestrutura e sistemas que aguentam carga.",
+        role: "Cofundador · Engenharia, arquitetura e infra",
+        bio: "Engenheiro por trás da arquitetura, da infraestrutura e dos sistemas que aguentam carga. Garante que tudo o que é desenhado funcione em produção, sob pressão.",
+        work: "Cuida de back-end, banco de dados, infraestrutura e deploy: a fundação técnica que sustenta as plataformas da Solvy rodando sob carga real.",
+        image: "/founders/neto.jpg",
       },
     ],
+    note: "Fotos placeholder — Pedro sobe as reais em public/founders/.",
+  },
+
+  testimonials: {
+    label: "O que dizem",
+    title: "Quem já construiu com a Solvy.",
+    items: [
+      {
+        quote:
+          "Entenderam nossa operação antes de propor qualquer tela. O sistema encaixou na rotina sem retrabalho.",
+        name: "Werson A.",
+        role: "Diretor · Instituto Nêmesis",
+      },
+      {
+        quote:
+          "No ar no prazo, sem surpresa de escopo. Falamos direto com quem construiu o tempo todo.",
+        name: "Beto / Alberto",
+        role: "Operações · Instituto Nêmesis",
+      },
+      {
+        quote:
+          "Tirou nosso controle das planilhas e deu previsibilidade pra operação crescer.",
+        name: "Gestor de Produto",
+        role: "Cliente Edu-tech",
+      },
+      {
+        quote:
+          "O evento processou milhares de inscritos sem cair. Checkout integrado, zero dor de cabeça.",
+        name: "Organização",
+        role: "Pregoeiros Summit",
+      },
+      {
+        quote:
+          "Não vendem hora, entregam ferramenta funcionando. A diferença se sente na operação.",
+        name: "Secretaria Municipal",
+        role: "Cliente B2G",
+      },
+      {
+        quote:
+          "Sênior de verdade do início ao fim. Sem júnior aprendendo no nosso projeto.",
+        name: "Diretoria",
+        role: "Empresa de Eventos",
+      },
+    ],
+    note: "Depoimentos ILUSTRATIVOS — Pedro substitui por reais com autorização dos clientes.",
   },
 
   portfolio: {
@@ -331,8 +475,10 @@ export const pt = {
   },
 
   finalCta: {
-    title: "Tem um processo crítico que ainda depende de improviso?",
-    sub: "Conta como sua operação funciona hoje e onde ela trava. A gente devolve um caminho claro: o que dá pra construir, em quanto tempo e por quê.",
+    badge: "Vamos conversar",
+    titleTop: "Operar no improviso ficou caro demais.",
+    titleHighlight: "Está na hora do software que cabe na sua operação.",
+    sub: "Conte como sua empresa funciona hoje. A gente devolve um caminho claro — sem pacote de horas, sem enrolação.",
     ctaPrimary: "Falar sobre meu projeto",
     ctaSecondary: "Ver como trabalhamos",
   },

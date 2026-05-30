@@ -1,5 +1,5 @@
 import localFont from "next/font/local";
-import { Newsreader } from "next/font/google";
+import { Newsreader, Plus_Jakarta_Sans } from "next/font/google";
 
 // Molde Expanded — tipografia oficial Solvy.
 // USO: somente DISPLAY (headlines text-giant/text-huge, ghost numbers, wordmark).
@@ -17,16 +17,13 @@ export const molde = localFont({
   ],
 });
 
-// TT Commons Pro — corpo, UI, navegacao, descricoes, forms, footer.
-// NOTA: hoje so temos peso Regular (400). Pesos 500/600/700 serao sintetizados
-// pelo browser (fake bold). Adicionar arquivos Medium/DemiBold/Bold quando
-// disponiveis, em formato WOFF2 idealmente.
-export const ttCommons = localFont({
+// Plus Jakarta Sans (Google) — corpo, UI, navegacao, descricoes, forms, footer.
+// Mantém a variável --font-tt-commons pra não mexer no resto do tema.
+export const ttCommons = Plus_Jakarta_Sans({
   variable: "--font-tt-commons",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
-  src: [
-    { path: "../../public/fonts/tt-commons-regular.ttf", weight: "400", style: "normal" },
-  ],
 });
 
 // Newsreader — serif editorial premium (Google Fonts).

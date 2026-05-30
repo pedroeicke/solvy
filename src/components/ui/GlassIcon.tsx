@@ -1,95 +1,129 @@
-// Icone "glass" (vidro fosco) por etapa — CSS/SVG, sem WebGL.
-// Hexagono translucido com gradiente azul/violeta, brilho e float.
+"use client";
 
-const HEX = "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)";
+import { useId } from "react";
+import {
+  Bot,
+  Globe,
+  Layers,
+  LifeBuoy,
+  Workflow,
+  type LucideIcon,
+} from "lucide-react";
+
+// Icone "glass" (vidro fosco) — CSS/SVG, sem WebGL. Hexagono com
+// efeito de bolha + brilho/contorno. Pontas ARREDONDADAS via clipPath
+// SVG (objectBoundingBox, escala com o tamanho).
+// Glyphs agora vêm da lucide-react: TODOS arredondados por design
+// (stroke-linecap/linejoin round + raios generosos).
+const ROUND_HEX =
+  "M0.6038,0.0603 L0.8263,0.1897 Q0.93,0.25 0.93,0.37 L0.93,0.63 " +
+  "Q0.93,0.75 0.8263,0.8103 L0.6038,0.9397 Q0.5,1 0.3963,0.9397 " +
+  "L0.1738,0.8103 Q0.07,0.75 0.07,0.63 L0.07,0.37 Q0.07,0.25 0.1738,0.1897 " +
+  "L0.3963,0.0603 Q0.5,0 0.6038,0.0603 Z";
+
+// Mapa por iconIndex usado em content.services.items:
+// 0 Workflow · 1 Layers · 2 Bot · 3 LifeBuoy · 4 Globe.
+const GLYPHS: LucideIcon[] = [Workflow, Layers, Bot, LifeBuoy, Globe];
 
 function Glyph({ i }: { i: number }) {
-  const c = "stroke-white";
-  const sw = 1.6;
-  switch (i) {
-    case 0: // Escuta — ondas de som
-      return (
-        <svg viewBox="0 0 48 48" fill="none" className="h-1/2 w-1/2">
-          <path d="M16 19v10M11 22v4M21 14v20M26 18v12M31 21v6M36 23v2" className={c} strokeWidth={sw} strokeLinecap="round" />
-        </svg>
-      );
-    case 1: // Diagnostico — lupa
-      return (
-        <svg viewBox="0 0 48 48" fill="none" className="h-1/2 w-1/2">
-          <circle cx="21" cy="21" r="11" className={c} strokeWidth={sw} />
-          <path d="M29 29l8 8" className={c} strokeWidth={sw} strokeLinecap="round" />
-        </svg>
-      );
-    case 2: // Escopo — moldura/documento
-      return (
-        <svg viewBox="0 0 48 48" fill="none" className="h-1/2 w-1/2">
-          <path d="M13 10h14l8 8v20H13z" className={c} strokeWidth={sw} strokeLinejoin="round" />
-          <path d="M27 10v8h8M18 26h12M18 31h12" className={c} strokeWidth={sw} strokeLinecap="round" />
-        </svg>
-      );
-    case 3: // Build — cubo
-      return (
-        <svg viewBox="0 0 48 48" fill="none" className="h-1/2 w-1/2">
-          <path d="M24 9l13 7.5v15L24 39 11 31.5v-15L24 9Z" className={c} strokeWidth={sw} strokeLinejoin="round" />
-          <path d="M11 16.5L24 24l13-7.5M24 24v15" className={c} strokeWidth={sw} strokeLinejoin="round" />
-        </svg>
-      );
-    case 4: // Deploy — seta pra cima / lancamento
-      return (
-        <svg viewBox="0 0 48 48" fill="none" className="h-1/2 w-1/2">
-          <path d="M24 11v22M24 11l-7 7M24 11l7 7" className={c} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M14 37h20" className={c} strokeWidth={sw} strokeLinecap="round" />
-        </svg>
-      );
-    default: // Sustentacao — loop/refresh
-      return (
-        <svg viewBox="0 0 48 48" fill="none" className="h-1/2 w-1/2">
-          <path d="M35 20a12 12 0 1 0 .5 7" className={c} strokeWidth={sw} strokeLinecap="round" />
-          <path d="M35 12v8h-8" className={c} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-  }
+  const Cmp = GLYPHS[i] ?? GLYPHS[0];
+  return <Cmp className="h-1/2 w-1/2 text-white" strokeWidth={1.6} />;
 }
 
-export default function GlassIcon({ i }: { i: number }) {
+// size: largura/altura da placa (default = versão gigante do ProcessSection).
+// Passar um valor compacto (ex.: clamp p/ ~80-110px) reusa o mesmo vidro menor.
+export default function GlassIcon({
+  i,
+  size = "clamp(220px,26vw,360px)",
+}: {
+  i: number;
+  size?: string;
+}) {
+  const cid = useId();
+  const clipId = `solvy-hex-${cid}`;
+  const clip = `url(#${clipId})`;
+
   return (
     <div className="glass-float relative grid place-items-center">
-      {/* glow atras */}
+      {/* clipPath do hexágono arredondado (escala com a placa) */}
+      <svg
+        aria-hidden
+        width="0"
+        height="0"
+        className="absolute"
+        style={{ pointerEvents: "none" }}
+      >
+        <defs>
+          <clipPath id={clipId} clipPathUnits="objectBoundingBox">
+            <path d={ROUND_HEX} />
+          </clipPath>
+        </defs>
+      </svg>
+
+      {/* glow atras (cores da Hero — azul Solvy, sem roxo) */}
       <div
         aria-hidden
         className="absolute inset-[-22%] rounded-full blur-3xl"
         style={{
           background:
-            "radial-gradient(circle, rgba(0,167,244,0.45), rgba(124,92,255,0.22) 45%, transparent 70%)",
+            "radial-gradient(circle, rgba(0,167,244,0.50), rgba(2,126,226,0.22) 45%, transparent 70%)",
         }}
       />
-      {/* placa de vidro hexagonal */}
+      {/* placa de vidro hexagonal (pontas arredondadas) */}
       <div
-        className="relative grid h-[clamp(220px,26vw,360px)] w-[clamp(220px,26vw,360px)] place-items-center"
+        className="relative grid place-items-center"
         style={{
-          clipPath: HEX,
+          width: size,
+          height: size,
+          clipPath: clip,
+          WebkitClipPath: clip,
+          // efeito BOLHA (estilo PS26): diagonal 135° com cantos azul-claro
+          // (sheen) e corpo azul navy luminoso — nas cores da Hero Solvy.
           background:
-            "linear-gradient(150deg, rgba(0,167,244,0.30), rgba(124,92,255,0.20) 45%, rgba(2,126,226,0.34))",
+            "linear-gradient(135deg, rgba(0,167,244,0.42) 0%, #0a3a63 24%, #073152 50%, #0a3a63 76%, rgba(0,167,244,0.42) 100%)",
           backdropFilter: "blur(10px)",
           WebkitBackdropFilter: "blur(10px)",
+          // rim crisp (contorno) + luz no topo + profundidade azul embaixo
           boxShadow:
-            "inset 0 3px 24px rgba(255,255,255,0.22), inset 0 -10px 40px rgba(2,126,226,0.30)",
+            "inset 0 0 0 1px rgba(255,255,255,0.28), inset 0 6px 18px rgba(255,255,255,0.16), inset 0 -16px 44px rgba(2,126,226,0.42)",
         }}
       >
-        {/* contorno claro */}
+        {/* contorno (rim) claro */}
         <div
           aria-hidden
           className="absolute inset-0"
           style={{
-            clipPath: HEX,
-            border: "1px solid rgba(255,255,255,0.22)",
+            clipPath: clip,
+            WebkitClipPath: clip,
+            border: "1px solid rgba(255,255,255,0.38)",
           }}
         />
-        {/* brilho especular */}
+        {/* sheen do topo — luz da bolha vindo de cima */}
         <div
           aria-hidden
-          className="absolute left-[12%] top-[8%] h-[40%] w-[55%] rounded-full opacity-60 blur-2xl"
-          style={{ background: "rgba(255,255,255,0.35)" }}
+          className="absolute inset-0"
+          style={{
+            clipPath: clip,
+            WebkitClipPath: clip,
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.07) 14%, transparent 34%)",
+          }}
+        />
+        {/* brilho difuso de apoio (halo suave) */}
+        <div
+          aria-hidden
+          className="absolute left-[10%] top-[6%] h-[40%] w-[58%] rounded-full opacity-50 blur-2xl"
+          style={{ background: "rgba(255,255,255,0.3)" }}
+        />
+        {/* glint — brilho especular concentrado (reflexo da bolha) */}
+        <div
+          aria-hidden
+          className="absolute left-[15%] top-[9%] h-[26%] w-[46%] blur-[2px]"
+          style={{
+            borderRadius: "50%",
+            background:
+              "radial-gradient(closest-side, rgba(255,255,255,0.85), rgba(255,255,255,0) 75%)",
+          }}
         />
         <Glyph i={i} />
       </div>

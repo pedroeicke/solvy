@@ -1,16 +1,17 @@
 import Hero from "@/components/sections/Hero";
 import ThesisSection from "@/components/sections/ThesisSection";
+import MetodoHorizontal from "@/components/sections/MetodoHorizontal";
 import ServicesSection from "@/components/sections/ServicesSection";
 import ProofSection from "@/components/sections/ProofSection";
+import TrustedBySection from "@/components/sections/TrustedBySection";
 import ProcessSection from "@/components/sections/ProcessSection";
-import ComparisonSection from "@/components/sections/ComparisonSection";
 import FoundersSection from "@/components/sections/FoundersSection";
 import PortfolioSection from "@/components/sections/PortfolioSection";
-import ProposalMethodSection from "@/components/sections/ProposalMethodSection";
 import FinalCTA from "@/components/sections/FinalCTA";
 
-// Removidos do fluxo (redundância de argumento): MetodoHorizontal, ProjectTypes.
-// Arquivos preservados em src/components/sections/ pra reavaliação.
+// Removidos do fluxo (redundância de argumento): ProjectTypesSection,
+// ProposalMethodSection, ComparisonSection. Arquivos preservados em
+// src/components/sections/.
 
 export default function Home() {
   return (
@@ -21,28 +22,28 @@ export default function Home() {
       {/* 2 — a virada conceitual */}
       <ThesisSection />
 
-      {/* 3 — o que construímos */}
+      {/* 3 — princípios de como trabalhamos (redução de risco + motion) */}
+      <MetodoHorizontal />
+
+      {/* 4 — o que construímos */}
       <ServicesSection />
 
-      {/* 4 — prova */}
+      {/* 5 — prova (Solvy em números + feedbacks na mesma seção) */}
       <ProofSection />
 
-      {/* 5 — como trabalhamos */}
+      {/* 6 — quem confia (faixa de logos) */}
+      <TrustedBySection />
+
+      {/* 7 — como trabalhamos */}
       <ProcessSection />
 
-      {/* 6 — projetos */}
+      {/* 7 — projetos */}
       <PortfolioSection />
 
-      {/* 7 — sócios = redução de risco */}
+      {/* 8 — sócios = redução de risco */}
       <FoundersSection />
 
-      {/* 8 — por que sob medida (selo final do argumento) */}
-      <ComparisonSection />
-
-      {/* 9 — método de proposta (perto do fechamento) */}
-      <ProposalMethodSection />
-
-      {/* 10 — fechamento */}
+      {/* 9 — fechamento */}
       <FinalCTA />
     </>
   );

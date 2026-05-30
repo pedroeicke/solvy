@@ -371,7 +371,7 @@ export default function Hero() {
       <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
         <svg
           viewBox={`0 0 ${VB_W} ${VB_H}`}
-          className="relative h-auto w-[min(74vw,620px)] px-6 drop-shadow-[0_6px_28px_rgba(0,167,244,0.32)]"
+          className="relative h-auto w-[min(74vw,620px)] px-6"
           style={{ overflow: "visible" }}
           fill="#ffffff"
           aria-label="Solvy"

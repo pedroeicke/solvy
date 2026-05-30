@@ -4,7 +4,6 @@ import { content, locale } from "@/content";
 import SmoothScroll from "@/components/SmoothScroll";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import Cursor from "@/components/motion/Cursor";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -47,7 +46,6 @@ export default function RootLayout({
               "radial-gradient(60vw 60vh at 92% 8%, rgba(0,167,244,0.16), transparent 60%), radial-gradient(58vw 58vh at 8% 92%, rgba(2,126,226,0.14), transparent 60%), #030305",
           }}
         />
-        <Cursor />
         <SmoothScroll>
           <Header />
           <main>{children}</main>

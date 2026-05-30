@@ -1,19 +1,43 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { content } from "@/content";
 import Reveal from "@/components/motion/Reveal";
+import GlassIcon from "@/components/ui/GlassIcon";
 
-const TICKS = Array.from({ length: 11 });
+// ============================================================
+// SERVICES — lista vertical 01-05 com detecção do item central no
+// scroll (mecânica preservada). Mudanças: (1) a setinha do item
+// ativo virou uma BOLHA GLASS compacta (GlassIcon reusado, versão
+// menor que a do ProcessSection), overlay ÚNICO pinado no centro da
+// linha ativa — troca de glyph com fade+scale (AnimatePresence
+// mode="wait" => nunca duas bolhas visíveis). (2) desc rica + frase-
+// gatilho por serviço (ver content.services.items).
+// ============================================================
+
+const BUBBLE_SIZE = "clamp(72px, 9vw, 108px)"; // compacta (vs gigante do Process)
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export default function ServicesSection() {
   const root = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
+  const [activeY, setActiveY] = useState(0);
+  const reduce = useReducedMotion();
   const { services } = content;
   const items = services.items;
+
+  // Centro vertical da linha ativa relativo ao wrapper, via offsetTop/
+  // offsetHeight (scroll-independente: a bolha rola junto com a lista).
+  const measure = useCallback((idx: number) => {
+    const rows = listRef.current?.querySelectorAll<HTMLLIElement>(".sv-row");
+    const li = rows?.[idx];
+    if (!li) return;
+    setActiveY(li.offsetTop + li.offsetHeight / 2);
+  }, []);
 
   useGSAP(
     () => {
@@ -59,6 +83,7 @@ export default function ServicesSection() {
           if (best !== activeRef.current) {
             activeRef.current = best;
             setActive(best);
+            measure(best);
           }
         },
       });
@@ -67,11 +92,29 @@ export default function ServicesSection() {
     { scope: root }
   );
 
+  // Medida inicial + re-medida no resize (clamp/vw mudam de tamanho).
+  useEffect(() => {
+    measure(activeRef.current);
+    const onResize = () => measure(activeRef.current);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [measure]);
+
+  // Re-mede depois que a desc termina de expandir (linha muda de altura).
+  useEffect(() => {
+    if (reduce) {
+      measure(active);
+      return;
+    }
+    const id = window.setTimeout(() => measure(active), 380);
+    return () => window.clearTimeout(id);
+  }, [active, reduce, measure]);
+
   return (
     <section
       ref={root}
       id="servicos"
-      className="relative overflow-hidden border-t border-line bg-bg py-28 md:py-40"
+      className="relative overflow-hidden bg-bg py-28 md:py-40"
     >
       <span className="sv-label section-label-bg absolute right-0 top-10 text-[22vw]">
         SERVIÇOS
@@ -88,110 +131,120 @@ export default function ServicesSection() {
         </Reveal>
       </div>
 
-      <ul ref={listRef} className="relative">
-        {items.map((s, i) => {
-          const on = i === active;
-          return (
-            <li
-              key={s.title}
-              className="sv-row group relative cursor-default border-b border-line first:border-t"
-            >
-              {/* banda ativa full-bleed */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-0 transition-opacity duration-500"
-                style={{
-                  opacity: on ? 1 : 0,
-                  background:
-                    "linear-gradient(90deg, rgba(0,167,244,0.06), rgba(2,126,226,0.025) 55%, transparent)",
-                }}
-              />
-              <div className="relative mx-auto flex max-w-[1240px] items-center gap-5 px-6 py-7 md:gap-12 md:px-10 md:py-10">
-                {/* seta */}
+      {/* wrapper relativo: lista + overlay da bolha (HTML válido: ul só com li) */}
+      <div className="relative">
+        <ul ref={listRef} className="relative">
+          {items.map((s, i) => {
+            const on = i === active;
+            return (
+              <li
+                key={s.title}
+                className="sv-row group relative cursor-default border-b border-line first:border-t"
+              >
+                {/* banda ativa full-bleed */}
                 <span
                   aria-hidden
-                  className="shrink-0 transition-all duration-500"
+                  className="pointer-events-none absolute inset-0 transition-opacity duration-500"
                   style={{
-                    color: on ? "var(--solvy-blue-light)" : "var(--solvy-faint)",
-                    transform: on ? "rotate(0deg) scale(1.1)" : "rotate(0deg)",
+                    opacity: on ? 1 : 0,
+                    background:
+                      "linear-gradient(90deg, rgba(0,167,244,0.06), rgba(2,126,226,0.025) 55%, transparent)",
                   }}
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="h-6 w-6 md:h-9 md:w-9"
-                  >
-                    <path
-                      d={on ? "M12 4v15M12 19l-6-6M12 19l6-6" : "M7 7h10v10M17 7L7 17"}
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
-
-                {/* nome + desc */}
-                <div className="min-w-0 flex-1">
-                  <h3
-                    className="display-tight font-medium tracking-tight transition-colors duration-500"
-                    style={{
-                      fontSize: "clamp(1.6rem, 4.4vw, 3.6rem)",
-                      color: on ? "var(--solvy-fg)" : "var(--solvy-faint)",
-                    }}
-                  >
-                    {s.title}
-                  </h3>
-                  <div
-                    className="overflow-hidden transition-all duration-500"
-                    style={{
-                      maxHeight: on ? 64 : 0,
-                      opacity: on ? 1 : 0,
-                    }}
-                  >
-                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted md:text-base">
-                      {s.desc}
-                    </p>
-                  </div>
-                </div>
-
-                {/* numero + regua */}
-                <div className="hidden shrink-0 items-center gap-6 md:flex">
-                  <div
-                    className="flex items-end gap-[3px] transition-opacity duration-500"
-                    style={{ opacity: on ? 1 : 0.3 }}
-                  >
-                    {TICKS.map((_, t) => {
-                      const center = t === 5;
-                      return (
-                        <span
-                          key={t}
-                          className="w-px transition-all duration-500"
-                          style={{
-                            height: center && on ? 26 : t % 5 === 0 ? 16 : 9,
-                            background:
-                              center && on
-                                ? "var(--solvy-blue-light)"
-                                : "var(--solvy-line-strong)",
-                          }}
-                        />
-                      );
-                    })}
-                  </div>
+                />
+                <div className="relative mx-auto flex max-w-[1240px] items-center gap-5 px-6 py-7 md:gap-12 md:px-10 md:py-10">
+                  {/* slot do ícone — reserva a largura da bolha (overlay único acima) */}
                   <span
-                    className="font-display text-lg tabular-nums transition-colors duration-500"
-                    style={{
-                      color: on ? "var(--solvy-fg)" : "var(--solvy-faint)",
-                    }}
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                    aria-hidden
+                    className="block shrink-0"
+                    style={{ width: BUBBLE_SIZE }}
+                  />
+
+                  {/* nome + gancho (colapsado, sempre) + desc rica (expandido) */}
+                  <div className="min-w-0 flex-1">
+                    <h3
+                      className="display-tight font-medium tracking-tight transition-colors duration-500"
+                      style={{
+                        fontSize: "clamp(1.6rem, 4.4vw, 3.6rem)",
+                        color: on ? "var(--solvy-fg)" : "var(--solvy-faint)",
+                      }}
+                    >
+                      {s.title}
+                    </h3>
+                    {/* gancho (Colapsado) — sempre visível; brilha no ativo */}
+                    <p
+                      className="mt-2 max-w-2xl text-sm leading-relaxed transition-colors duration-500 md:mt-3 md:text-base"
+                      style={{
+                        color: on
+                          ? "var(--solvy-blue-light)"
+                          : "var(--solvy-muted)",
+                      }}
+                    >
+                      {s.trigger}
+                    </p>
+                    {/* parágrafo (Expandido) + resultado (↳) — revela no ativo */}
+                    <div
+                      className="overflow-hidden transition-all duration-500"
+                      style={{ maxHeight: on ? 520 : 0, opacity: on ? 1 : 0 }}
+                    >
+                      <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted md:text-base">
+                        {s.desc}
+                      </p>
+                      <p className="mt-3.5 flex max-w-2xl items-start gap-2 text-sm font-medium text-blue-light">
+                        <span aria-hidden className="text-blue-light/70">
+                          ↳
+                        </span>
+                        <span>{s.result}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* numero */}
+                  <div className="hidden shrink-0 items-center md:flex">
+                    <span
+                      className="font-display text-lg tabular-nums transition-colors duration-500"
+                      style={{
+                        color: on ? "var(--solvy-fg)" : "var(--solvy-faint)",
+                      }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* BOLHA GLASS — overlay único pinado no centro da linha ativa.
+            Alinhada ao slot do ícone (mesma largura + mesmo container). */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0"
+          style={{
+            top: activeY,
+            transition: reduce ? "none" : "top 500ms cubic-bezier(0.16,1,0.3,1)",
+          }}
+        >
+          <div className="mx-auto flex max-w-[1240px] px-6 md:px-10">
+            <div
+              className="grid -translate-y-1/2 place-items-center"
+              style={{ width: BUBBLE_SIZE }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={active}
+                  initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.34, ease: EASE }}
+                >
+                  <GlassIcon i={items[active].iconIndex} size={BUBBLE_SIZE} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

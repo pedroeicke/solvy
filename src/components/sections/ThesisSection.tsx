@@ -1,10 +1,12 @@
-"use client";
-
-import { useRef } from "react";
 import { content } from "@/content";
 import Reveal from "@/components/motion/Reveal";
-import EncaixeMotif from "@/components/ui/EncaixeMotif";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+
+// ============================================================
+// THESIS / "Nosso movimento" — manifesto centralizado: laurels (ramos de
+// louro em SVG) flanqueando o tagline + linha de números do Solvy embaixo.
+// Tema dark Solvy; fundo = vídeo movimentbg.mp4. EncaixeMotif preservado
+// no projeto (não usado aqui).
+// ============================================================
 
 const GRAD_TEXT = {
   backgroundImage: "linear-gradient(90deg, #027ee2 0%, #00a7f4 100%)",
@@ -14,82 +16,91 @@ const GRAD_TEXT = {
   color: "transparent",
 } as const;
 
+// Ramo de louro (public/royalty.svg). O SVG tem fill escuro fixo, então uso
+// CSS mask pra recolorir com a cor do tema (bg-current). `flip` espelha pra
+// usar o mesmo ramo no lado direito.
 export default function ThesisSection() {
   const { thesis } = content;
   const [before, after] = thesis.title.split(thesis.highlight);
-  const root = useRef<HTMLElement>(null);
-
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(min-width: 768px)", () => {
-        const tl = gsap.to(".thesis-motif", {
-          rotate: 14,
-          yPercent: -6,
-          ease: "none",
-          scrollTrigger: {
-            trigger: root.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1.2,
-          },
-        });
-        return () => {
-          tl.scrollTrigger?.kill();
-          tl.kill();
-        };
-      });
-    },
-    { scope: root }
-  );
 
   return (
+    // z-10 + margem negativa (--overlap): a seção "sobe" e SOBREPÕE o Hero
+    // (pinado) ao rolar — efeito de cortina sobre o vídeo.
     <section
-      ref={root}
       id="virada"
-      className="relative overflow-hidden py-32 md:py-48"
+      aria-labelledby="virada-title"
+      className="relative z-10 mt-[calc(var(--overlap)*-1)] overflow-hidden bg-bg py-24 md:py-36 [--overlap:90vh]"
     >
-      <div className="mx-auto grid max-w-[1240px] items-center gap-16 px-6 md:grid-cols-[1.1fr_1fr] md:gap-20 md:px-10">
-        <div>
-          <Reveal as="p" className="mb-10 text-xs uppercase tracking-[0.28em] text-blue-light">
-            {thesis.label}
-          </Reveal>
-          <Reveal y={50}>
-            <h2 className="display-tight text-huge text-fg">
+      {/* glow sutil de fundo */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-32 left-1/2 h-[520px] w-[920px] -translate-x-1/2 rounded-full opacity-[0.16] blur-[160px]"
+        style={{
+          background:
+            "radial-gradient(closest-side, rgba(0,167,244,0.5), transparent)",
+        }}
+      />
+
+      <div className="relative z-10 mx-auto max-w-[1240px] px-6 md:px-10">
+        {/* eyebrow */}
+        <Reveal
+          as="p"
+          className="text-center text-xs uppercase tracking-[0.28em] text-blue-light"
+        >
+          {thesis.label}
+        </Reveal>
+
+        {/* laurels flanqueando o tagline central */}
+        <Reveal y={36} className="mt-10">
+          <div className="flex items-center justify-center gap-5 md:gap-9">
+            <span
+              aria-hidden
+              className="inline-block shrink-0 select-none text-6xl font-light leading-none text-blue-light/55 md:text-8xl"
+              style={{ transform: "translateY(-12px) scaleY(1.3)" }}
+            >
+              {"<"}
+            </span>
+            <h2
+              id="virada-title"
+              className="max-w-2xl text-center text-[clamp(1.5rem,3.2vw,2.75rem)] font-light leading-[1.15] tracking-[-0.01em] text-fg"
+            >
               {before}
               <span style={GRAD_TEXT}>{thesis.highlight}</span>
               {after}
             </h2>
-          </Reveal>
-          <Reveal as="p" delay={0.1} className="mt-9 max-w-xl text-lead leading-relaxed text-muted">
-            {thesis.body}
-          </Reveal>
-
-          {/* citacao de densidade */}
-          <Reveal delay={0.18}>
-            <figure className="relative mt-12 max-w-xl">
-              <div
-                aria-hidden
-                className="absolute left-0 top-0 h-full w-px"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(0,167,244,0.7) 0%, rgba(2,126,226,0.25) 100%)",
-                }}
-              />
-              <blockquote className="display-tight pl-6 text-2xl font-medium leading-snug tracking-tight text-fg md:text-3xl">
-                Antes da primeira linha de código,{" "}
-                <span style={GRAD_TEXT}>vêm 4 conversas.</span>
-              </blockquote>
-            </figure>
-          </Reveal>
-        </div>
-
-        {/* motif maior + parallax/rotacao no scroll */}
-        <div className="flex justify-center">
-          <div className="thesis-motif will-change-transform">
-            <EncaixeMotif className="h-72 w-72 md:h-[clamp(360px,40vw,560px)] md:w-[clamp(360px,40vw,560px)]" />
+            <span
+              aria-hidden
+              className="inline-block shrink-0 select-none text-6xl font-light leading-none text-blue-light/55 md:text-8xl"
+              style={{ transform: "translateY(-12px) scaleY(1.3)" }}
+            >
+              {">"}
+            </span>
           </div>
+        </Reveal>
+
+        {/* body curto, centralizado */}
+        <Reveal delay={0.12}>
+          <p className="mx-auto mt-8 max-w-2xl text-center text-base leading-relaxed text-muted md:text-lg">
+            {thesis.body}
+          </p>
+        </Reveal>
+
+        {/* números do Solvy em linha */}
+        <div className="mt-16 flex flex-wrap items-start justify-center gap-x-16 gap-y-10 md:mt-20 md:gap-x-24">
+          {thesis.stats.map((s, i) => (
+            <Reveal key={s.label} delay={0.1 + i * 0.08}>
+              <div className="text-center">
+                <div className="text-5xl font-light tracking-tight text-fg md:text-6xl">
+                  {s.value}
+                </div>
+                <div className="mt-3 text-xs uppercase tracking-[0.22em] text-muted">
+                  {s.label}
+                </div>
+              </div>
+            </Reveal>
+          ))}
         </div>
+
       </div>
     </section>
   );

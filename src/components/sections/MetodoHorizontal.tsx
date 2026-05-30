@@ -1,437 +1,226 @@
 "use client";
 
-import { useRef, useLayoutEffect, useState } from "react";
 import Image from "next/image";
-import { gsap } from "@/lib/gsap"; // já registra ScrollTrigger (guard de SSR)
+import { motion, useReducedMotion } from "framer-motion";
+import AnimatedGradient from "@/components/AnimatedGradient";
+import {
+  ArrowUpRight,
+  Code2,
+  Handshake,
+  Target,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
+import { content } from "@/content";
+import Magnet from "@/components/motion/Magnet";
+import GlowCard from "@/components/ui/GlowCard";
 
-/* ------------------------------------------------------------------ */
-/*  Dados dos princípios                                               */
-/*  visual3d: caminho do PNG 3D (transparente). Se vazio/erro, usa o   */
-/*  glyph SVG de fallback — assim a seção funciona ANTES dos 3D.       */
-/* ------------------------------------------------------------------ */
-interface Principio {
-  num: string;
-  titulo: string[]; // linhas do título
-  desc: string;
-  tag: string; // frase editorial (Newsreader italic)
-  visual3d?: string; // ex: '/icons-3d/decisao.png'
-  glyph: React.ReactNode; // fallback SVG
-  glowFrom: string; // cor do glow do card
+// ============================================================
+// MÉTODO — "Como a Solvy trabalha". Reaproveita metodo.principios num
+// painel IMERSIVO full-bleed (estilo do card de "comunidade"): fundo
+// cobrindo a seção + título grande sobreposto (light) com seta + grid
+// ASSIMÉTRICO 4 col × 2 linhas:
+//   col1/linha2 = tile de imagem (badge)   · col1/linha1 = vazio (fundo)
+//   col2 = 2 cards                          · col3/linha1 = card destaque
+//   col3/linha2 = vazio (fundo)             · col4 = card alto (row-span-2)
+// Cards centralizados, sem número (igual à referência). Fundo =
+// ColorBends (mesh azul do Hero) -> trocável por foto/vídeo full-bleed.
+// Tema dark/azul Solvy. Ícones lucide. Entrada via framer whileInView.
+// ============================================================
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+// Ícones por iconIndex: 0 pessoa · 1 código · 2 escopo/alvo · 3 parceria.
+const M_ICONS: LucideIcon[] = [Users, Code2, Target, Handshake];
+
+type Principio = (typeof content)["metodo"]["principios"][number];
+
+function FeatureCard({
+  p,
+  highlight = false,
+  className = "",
+}: {
+  p: Principio;
+  highlight?: boolean;
+  className?: string;
+}) {
+  const Icon = M_ICONS[p.iconIndex] ?? Users;
+  return (
+    <GlowCard
+      className={`group flex h-full min-h-[210px] flex-col items-center rounded-2xl border p-7 text-center transition-colors duration-300 ${
+        highlight
+          ? "border-transparent bg-fg text-bg"
+          : "border-white/10 bg-white/[0.03] text-fg backdrop-blur-md hover:border-white/20"
+      } ${className}`}
+    >
+      <span
+        className={`mb-5 grid h-14 w-14 place-items-center rounded-full ${
+          highlight
+            ? "bg-blue/10 text-blue"
+            : "bg-gradient-to-br from-blue to-blue-deep text-white"
+        }`}
+      >
+        <Icon className="h-6 w-6" strokeWidth={1.75} />
+      </span>
+      <h4 className="mb-3 font-display text-xl font-medium tracking-tight">
+        {p.title}
+      </h4>
+      <p
+        className={`text-sm leading-relaxed ${
+          highlight ? "text-bg" : "text-fg"
+        }`}
+      >
+        {p.desc}
+      </p>
+    </GlowCard>
+  );
 }
 
-const Glyph = ({ d }: { d: React.ReactNode }) => (
-  <svg
-    viewBox="0 0 100 100"
-    fill="none"
-    strokeWidth={2}
-    className="h-[55%] w-[55%]"
-  >
-    {d}
-  </svg>
-);
-
-const principios: Principio[] = [
-  {
-    num: "01",
-    titulo: ["Quem decide", "está na sala."],
-    desc: "Arquitetura, código e produto saem da mesma cabeça. Decisões técnicas acontecem em horas, não em sprints.",
-    tag: "— Sem intermediário entre a ideia e a entrega.",
-    visual3d: "/icons-3d/decisao.png",
-    glowFrom: "rgba(10,246,248,0.22)",
-    glyph: (
-      <Glyph
-        d={
-          <>
-            <circle cx="50" cy="50" r="14" stroke="#0AF6F8" />
-            <circle cx="50" cy="18" r="6" stroke="#0AF6F8" />
-            <circle cx="80" cy="68" r="6" stroke="#0AF6F8" />
-            <circle cx="20" cy="68" r="6" stroke="#0AF6F8" />
-            <line x1="50" y1="36" x2="50" y2="24" stroke="#0AF6F8" />
-            <line x1="62" y1="58" x2="75" y2="65" stroke="#0AF6F8" />
-            <line x1="38" y1="58" x2="25" y2="65" stroke="#0AF6F8" />
-          </>
-        }
-      />
-    ),
-  },
-  {
-    num: "02",
-    titulo: ["Código que dura", "mais que o contrato."],
-    desc: "Stack moderna, documentada, manutenível. Vocês não ficam reféns de quem escreveu.",
-    tag: "— Construído pra durar, não pra entregar e sumir.",
-    visual3d: "/icons-3d/codigo.png",
-    glowFrom: "rgba(6,102,166,0.28)",
-    glyph: (
-      <Glyph
-        d={
-          <>
-            <polygon
-              points="50,15 80,32 80,68 50,85 20,68 20,32"
-              stroke="#0AF6F8"
-            />
-            <polygon
-              points="50,30 67,40 67,60 50,70 33,60 33,40"
-              stroke="#0AF6F8"
-            />
-          </>
-        }
-      />
-    ),
-  },
-  {
-    num: "03",
-    titulo: ["Escopo claro,", "evolução real."],
-    desc: "Priorização prática, entregas iterativas e decisões transparentes do início ao fim.",
-    tag: "— Você sempre sabe onde o projeto está.",
-    visual3d: "/icons-3d/escopo.png",
-    glowFrom: "rgba(10,246,248,0.20)",
-    glyph: (
-      <Glyph
-        d={
-          <>
-            <rect x="18" y="62" width="16" height="20" rx="2" stroke="#0AF6F8" />
-            <rect x="42" y="46" width="16" height="36" rx="2" stroke="#0AF6F8" />
-            <rect x="66" y="28" width="16" height="54" rx="2" stroke="#0AF6F8" />
-            <path
-              d="M20 58 L48 40 L74 22"
-              stroke="#0AF6F8"
-              strokeDasharray="3 3"
-            />
-          </>
-        }
-      />
-    ),
-  },
-  {
-    num: "04",
-    titulo: ["Construção", "com parceria."],
-    desc: "Você fala com quem resolve. Ajustes, decisões e alinhamento sem ruído.",
-    tag: "— Um time só, do briefing ao deploy.",
-    visual3d: "/icons-3d/parceria.png",
-    glowFrom: "rgba(6,102,166,0.30)",
-    glyph: (
-      <Glyph
-        d={
-          <>
-            <path
-              d="M50 30 C35 30 30 45 30 55 C30 68 40 74 50 74"
-              stroke="#0AF6F8"
-            />
-            <path
-              d="M50 30 C65 30 70 45 70 55 C70 68 60 74 50 74"
-              stroke="#0AF6F8"
-            />
-            <circle cx="50" cy="52" r="6" stroke="#0AF6F8" />
-          </>
-        }
-      />
-    ),
-  },
-];
-
-const glows = [
-  "radial-gradient(1000px 800px at 75% 50%, rgba(10,246,248,0.12), transparent 60%)",
-  "radial-gradient(1000px 800px at 70% 45%, rgba(6,102,166,0.16), transparent 60%)",
-  "radial-gradient(1000px 800px at 78% 55%, rgba(10,246,248,0.10), transparent 60%)",
-  "radial-gradient(1000px 800px at 72% 50%, rgba(6,102,166,0.18), transparent 60%)",
-];
-
 export default function MetodoHorizontal() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
-  const tiltRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [active, setActive] = useState(0);
-  const [hasImg, setHasImg] = useState<boolean[]>(principios.map(() => true));
+  const { metodo } = content;
+  const p = metodo.principios;
+  const reduce = useReducedMotion();
 
-  // ---- GSAP: pin + scroll horizontal com scrub ----
-  useLayoutEffect(() => {
-    const section = sectionRef.current;
-    const track = trackRef.current;
-    if (!section || !track) return;
-
-    const ctx = gsap.context(() => {
-      const totalShift = () => -(track.scrollWidth - window.innerWidth);
-
-      const tween = gsap.to(track, {
-        x: totalShift,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: () => `+=${track.scrollWidth - window.innerWidth}`,
-          scrub: 0.8,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            const idx = Math.min(
-              principios.length - 1,
-              Math.round(self.progress * (principios.length - 1))
-            );
-            setActive(idx);
-            if (glowRef.current) glowRef.current.style.background = glows[idx];
-          },
-        },
-      });
-
-      return () => {
-        tween.scrollTrigger?.kill();
-        tween.kill();
-      };
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
-
-  // ---- Tilt no mouse (desktop) ----
-  useLayoutEffect(() => {
-    if (!window.matchMedia("(hover: hover)").matches) return;
-    const handler = (e: MouseEvent) => {
-      const cx = (e.clientX / window.innerWidth - 0.5) * 2;
-      const cy = (e.clientY / window.innerHeight - 0.5) * 2;
-      tiltRefs.current.forEach((t) => {
-        if (t)
-          t.style.transform = `rotateY(${cx * 9}deg) rotateX(${-cy * 9}deg)`;
-      });
-    };
-    window.addEventListener("mousemove", handler);
-    return () => window.removeEventListener("mousemove", handler);
-  }, []);
+  const reveal = (i: number) => ({
+    initial: reduce ? false : { opacity: 0, y: 24 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.2 },
+    transition: { duration: 0.6, ease: EASE, delay: i * 0.08 },
+  });
 
   return (
     <section
-      ref={sectionRef}
       id="metodo"
       aria-label="Método — Como a Solvy trabalha"
-      className="relative bg-[#030306]"
+      className="relative overflow-hidden bg-bg"
     >
-      {/* DESKTOP / TABLET: experiência pinada horizontal */}
-      <div className="relative hidden h-screen overflow-hidden md:block">
-        {/* glow de fundo que muda por princípio */}
-        <div
-          ref={glowRef}
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-0 transition-[background] duration-700"
-          style={{ background: glows[0] }}
+      {/* FUNDO IMERSIVO — gradiente animado WebGL (AnimatedGradient) com as
+          cores do Solvy + azul piscina. A diagonal sup-ESQ ↔ inf-DIR é
+          escurecida e o topo/base protegidos pra legibilidade. */}
+      <div aria-hidden className="absolute inset-0">
+        {/* Gradiente animado WebGL (preset Prism) com as cores do Solvy,
+            bem devagar. zIndex 0 = acima do bg da seção. */}
+        <AnimatedGradient
+          style={{ zIndex: 0 }}
+          config={{
+            preset: "custom",
+            color1: "#030305",
+            color2: "#027ee2",
+            color3: "#07DBDC",
+            rotation: -50,
+            proportion: 1,
+            scale: 0.01,
+            speed: 6,
+            distortion: 0,
+            swirl: 50,
+            swirlIterations: 16,
+            softness: 47,
+            offset: -299,
+            shape: "Checks",
+            shapeSize: 45,
+          }}
         />
 
-        {/* topbar */}
-        <div className="relative z-10 flex items-center justify-between px-[clamp(1.5rem,4vw,4rem)] pt-8">
-          <span className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[#0AF6F8]">
-            Método — Como a Solvy trabalha
-          </span>
-          <span className="text-sm tracking-[0.1em] text-[#8b93a3] tabular-nums">
-            <b className="font-semibold text-[#f7f9fc]">
-              {String(active + 1).padStart(2, "0")}
-            </b>{" "}
-            / 04
-          </span>
-        </div>
-
-        {/* trilho horizontal */}
+        {/* escurece levemente a diagonal sup-ESQ ↔ inf-DIR */}
         <div
-          ref={trackRef}
-          className="absolute left-0 top-0 flex h-screen will-change-transform"
-          style={{ width: `${principios.length * 100}vw` }}
-        >
-          {principios.map((p, i) => (
-            <article
-              key={p.num}
-              className="relative grid h-screen w-screen items-center gap-8 px-[clamp(1.5rem,5vw,6rem)]"
-              style={{ gridTemplateColumns: "1.1fr 0.9fr" }}
-            >
-              {/* número fantasma */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute left-[clamp(1rem,3vw,3rem)] top-1/2 -translate-y-1/2 select-none font-bold leading-none"
-                style={{
-                  fontSize: "clamp(16rem, 34vw, 42rem)",
-                  color: "transparent",
-                  WebkitTextStroke: "1.5px rgba(255,255,255,0.05)",
-                }}
-              >
-                {p.num}
-              </span>
-
-              {/* texto */}
-              <div className="relative z-10 max-w-2xl">
-                <span className="mb-5 block text-base font-semibold tracking-[0.1em] text-[#0AF6F8]">
-                  Princípio {p.num}
-                </span>
-                <h2
-                  className="mb-6 font-medium leading-[1.02] tracking-[-0.02em] text-[#f7f9fc]"
-                  style={{ fontSize: "clamp(2.2rem, 4.2vw, 4.4rem)" }}
-                >
-                  {p.titulo.map((line, k) => (
-                    <span key={k} className="block">
-                      {line}
-                    </span>
-                  ))}
-                </h2>
-                <p
-                  className="max-w-lg leading-[1.55] text-[#8b93a3]"
-                  style={{ fontSize: "clamp(1rem, 1.3vw, 1.3rem)" }}
-                >
-                  {p.desc}
-                </p>
-                <p className="serif mt-8 text-[1.05rem] italic text-[#4c5260]">
-                  {p.tag}
-                </p>
-              </div>
-
-              {/* visual 3D / glass card */}
-              <div className="relative z-[5] flex h-3/5 items-center justify-center [perspective:1000px]">
-                <div
-                  ref={(el) => {
-                    tiltRefs.current[i] = el;
-                  }}
-                  className="relative aspect-square w-full max-w-[420px] transition-transform duration-200 ease-out [transform-style:preserve-3d]"
-                >
-                  {/* card de vidro premium */}
-                  <div
-                    className="absolute inset-0 overflow-hidden rounded-[28px] border"
-                    style={{
-                      background:
-                        "linear-gradient(145deg, rgba(10,246,248,0.08), rgba(6,102,166,0.04))",
-                      borderColor: "rgba(10,246,248,0.18)",
-                      boxShadow:
-                        "inset 0 1px 1px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(10,246,248,0.10)",
-                      backdropFilter: "blur(2px)",
-                    }}
-                  >
-                    {/* glow interno do card */}
-                    <div
-                      aria-hidden
-                      className="absolute -inset-1/2"
-                      style={{
-                        background: `radial-gradient(circle at 30% 30%, ${p.glowFrom}, transparent 45%)`,
-                      }}
-                    />
-                  </div>
-
-                  {/* elemento 3D ou fallback SVG */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    {p.visual3d && hasImg[i] ? (
-                      <Image
-                        src={p.visual3d}
-                        alt=""
-                        width={300}
-                        height={300}
-                        className="h-3/5 w-3/5 object-contain drop-shadow-[0_10px_30px_rgba(10,246,248,0.25)]"
-                        onError={() =>
-                          setHasImg((prev) => {
-                            const n = [...prev];
-                            n[i] = false;
-                            return n;
-                          })
-                        }
-                      />
-                    ) : (
-                      p.glyph
-                    )}
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        {/* barra de progresso */}
-        <div className="absolute bottom-0 left-0 z-10 flex w-full gap-2 px-[clamp(1.5rem,4vw,4rem)] pb-10">
-          {principios.map((_, i) => (
-            <div
-              key={i}
-              className="relative h-0.5 flex-1 overflow-hidden rounded bg-white/10"
-            >
-              <i
-                className="absolute inset-0 origin-left rounded transition-transform duration-300"
-                style={{
-                  background: "linear-gradient(90deg, #0666A6, #0AF6F8)",
-                  transform: i <= active ? "scaleX(1)" : "scaleX(0)",
-                  opacity: i < active ? 0.4 : 1,
-                }}
-              />
-            </div>
-          ))}
-        </div>
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(3,3,5,0.8) 0%, rgba(3,3,5,0.22) 24%, transparent 50%, rgba(3,3,5,0.22) 76%, rgba(3,3,5,0.8) 100%)",
+          }}
+        />
+        {/* protege o título (topo) e costura a base com a próxima seção */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(3,3,5,0.45) 0%, transparent 15%), linear-gradient(to top, var(--solvy-bg) 0%, transparent 14%)",
+          }}
+        />
       </div>
 
-      {/* MOBILE: stack vertical */}
-      <div className="md:hidden">
-        <div className="sticky top-0 z-10 bg-[#030306]/80 px-6 py-5 backdrop-blur-md">
-          <span className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-[#0AF6F8]">
-            Método — Como a Solvy trabalha
-          </span>
-        </div>
-        {principios.map((p, i) => (
-          <article
-            key={p.num}
-            className="relative flex min-h-[88vh] flex-col justify-center gap-10 px-6 py-24"
-          >
-            <span
-              aria-hidden
-              className="pointer-events-none absolute left-4 top-12 select-none text-[10rem] font-bold leading-none"
-              style={{
-                color: "transparent",
-                WebkitTextStroke: "1px rgba(255,255,255,0.05)",
-              }}
+      <div className="relative mx-auto max-w-[1420px] px-6 py-20 md:px-10 md:py-28">
+        {/* HEADER sobreposto — título grande light + seta */}
+        <div className="flex items-center justify-end gap-4">
+          <h2 className="display-tight text-right text-[clamp(2.25rem,6vw,5rem)] font-light leading-[0.95] tracking-tight text-fg">
+            Como a Solvy
+          </h2>
+          <Magnet data-cursor="hover">
+            <a
+              href="#contato"
+              aria-label={metodo.cta}
+              className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-white/30 text-fg backdrop-blur-sm transition hover:border-blue-light/60 hover:bg-white/10"
             >
-              {p.num}
+              <ArrowUpRight className="h-6 w-6" strokeWidth={1.75} />
+            </a>
+          </Magnet>
+        </div>
+
+        <div className="mt-4 flex items-center gap-6">
+          <span className="text-right text-[20px] font-semibold uppercase leading-tight tracking-[0.2em] text-blue-light/80">
+            Menos
+            <br />
+            intermediário
+            <br />
+            Sob medida
+          </span>
+          <h3 className="display-tight text-[clamp(2rem,7vw,6rem)] font-light leading-[0.9] tracking-tight text-fg">
+            trabalha.
+          </h3>
+        </div>
+
+        {/* GRID 4×2 — mesma montagem da referência "Comunidade":
+            col1 = badge (pill) + imagem coladas no rodapé · col2 = 2 cards
+            empilhados · col3 = card BRANCO só na linha de cima (resto respira
+            o fundo) · col4 = card alto ocupando as 2 linhas */}
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-16 lg:grid-cols-[repeat(4,317px)] lg:grid-rows-[232px_232px] lg:justify-center">
+          {/* col1 — pill "Sob medida" centralizada (acima) + tile de imagem */}
+          <motion.div
+            {...reveal(0)}
+            className="flex flex-col justify-end gap-4 sm:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-start-1 lg:row-span-2"
+          >
+            <span className="inline-flex h-[35px] w-[140px] items-center justify-center self-center rounded-full border border-white/30 bg-white/[0.06] text-[0.7rem] font-semibold uppercase tracking-wider text-fg backdrop-blur-md">
+              Sob medida
             </span>
-
-            {/* visual */}
-            <div className="relative flex h-64 items-center justify-center [perspective:1000px]">
-              <div className="relative aspect-square h-full max-w-[260px]">
-                <div
-                  className="absolute inset-0 overflow-hidden rounded-3xl border"
-                  style={{
-                    background:
-                      "linear-gradient(145deg, rgba(10,246,248,0.08), rgba(6,102,166,0.04))",
-                    borderColor: "rgba(10,246,248,0.18)",
-                    boxShadow:
-                      "inset 0 1px 1px rgba(255,255,255,0.08), 0 20px 60px rgba(0,0,0,0.6), 0 0 50px rgba(10,246,248,0.10)",
-                  }}
-                >
-                  <div
-                    aria-hidden
-                    className="absolute -inset-1/2"
-                    style={{
-                      background: `radial-gradient(circle at 30% 30%, ${p.glowFrom}, transparent 45%)`,
-                    }}
-                  />
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {p.visual3d && hasImg[i] ? (
-                    <Image
-                      src={p.visual3d}
-                      alt=""
-                      width={200}
-                      height={200}
-                      className="h-3/5 w-3/5 object-contain"
-                    />
-                  ) : (
-                    p.glyph
-                  )}
-                </div>
-              </div>
+            <div className="relative h-[232px] w-full overflow-hidden rounded-2xl border border-white/15">
+              <Image
+                src={p[0].image}
+                alt=""
+                fill
+                sizes="(min-width:1024px) 25vw, 100vw"
+                className="object-cover"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-bg/70 to-transparent"
+              />
             </div>
+          </motion.div>
 
-            {/* texto */}
-            <div className="relative z-10">
-              <span className="mb-3 block text-sm font-semibold tracking-[0.1em] text-[#0AF6F8]">
-                Princípio {p.num}
-              </span>
-              <h2 className="mb-4 text-4xl font-medium leading-[1.05] tracking-[-0.02em] text-[#f7f9fc]">
-                {p.titulo.join(" ")}
-              </h2>
-              <p className="text-lg leading-relaxed text-[#8b93a3]">{p.desc}</p>
-              <p className="serif mt-6 text-base italic text-[#4c5260]">
-                {p.tag}
-              </p>
-            </div>
-          </article>
-        ))}
+          {/* col2 — duas cards empilhadas (glass) */}
+          <motion.div {...reveal(1)} className="lg:col-start-2 lg:row-start-1">
+            <FeatureCard p={p[0]} />
+          </motion.div>
+          <motion.div {...reveal(2)} className="lg:col-start-2 lg:row-start-2">
+            <FeatureCard p={p[1]} />
+          </motion.div>
+
+          {/* col3 — card BRANCO (destaque) · 232 de altura; largura = track 317px */}
+          <motion.div
+            {...reveal(3)}
+            className="lg:col-start-3 lg:row-start-1"
+          >
+            <FeatureCard p={p[2]} highlight />
+          </motion.div>
+
+          {/* col4 — card alto ocupando as 2 linhas */}
+          <motion.div
+            {...reveal(4)}
+            className="lg:col-start-4 lg:row-start-1 lg:row-span-2"
+          >
+            <FeatureCard p={p[3]} className="justify-end pb-12" />
+          </motion.div>
+        </div>
       </div>
     </section>
   );
