@@ -27,8 +27,10 @@ export default function Reveal({
 
   useGSAP(
     () => {
-      // immediateRender:false -> NAO esconde ate o trigger ativar.
-      // Conteudo fica visivel por padrao; nunca trava invisivel.
+      // immediateRender:true -> aplica o estado "from" (invisível) JÁ no mount,
+      // antes do elemento aparecer. Assim ele NUNCA é visto visível antes do
+      // trigger (sem o flash "mostra-pisca-mostra" ao rolar). Robustez mantida:
+      // o "from" só é aplicado quando o GSAP roda; sem JS o conteúdo fica visível.
       gsap.fromTo(
         ref.current,
         { autoAlpha: 0, y, filter: blur ? "blur(14px)" : "blur(0px)" },
@@ -39,7 +41,7 @@ export default function Reveal({
           duration: 1.1,
           delay,
           ease: "expo.out",
-          immediateRender: false,
+          immediateRender: true,
           overwrite: "auto",
           scrollTrigger: { trigger: ref.current, start, once: true },
         }

@@ -164,6 +164,8 @@ interface AnimatedGradientProps {
   radius?: string;
   style?: CSSProperties;
   className?: string;
+  /** Teto de devicePixelRatio (perf no mobile). Sem valor = sem limite. */
+  maxPixelRatio?: number;
 }
 
 export default function AnimatedGradient({
@@ -172,6 +174,7 @@ export default function AnimatedGradient({
   radius = "0px",
   style,
   className,
+  maxPixelRatio,
 }: AnimatedGradientProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -276,7 +279,10 @@ export default function AnimatedGradient({
     const resize = () => {
       const width = container.clientWidth;
       const height = container.clientHeight;
-      const pixelRatio = window.devicePixelRatio || 1;
+      const pixelRatio = Math.min(
+        window.devicePixelRatio || 1,
+        maxPixelRatio ?? Infinity
+      );
       canvas.width = width * pixelRatio;
       canvas.height = height * pixelRatio;
       canvas.style.width = `${width}px`;
@@ -296,7 +302,10 @@ export default function AnimatedGradient({
 
       gl.uniform1f(uniforms.u_time, elapsed * speed + params.offset * 0.01);
       gl.uniform2f(uniforms.u_resolution, canvas.width, canvas.height);
-      gl.uniform1f(uniforms.u_pixelRatio, window.devicePixelRatio || 1);
+      gl.uniform1f(
+        uniforms.u_pixelRatio,
+        Math.min(window.devicePixelRatio || 1, maxPixelRatio ?? Infinity)
+      );
       gl.uniform1f(uniforms.u_scale, params.scale);
       gl.uniform1f(uniforms.u_rotation, (params.rotation * Math.PI) / 180);
 
@@ -334,7 +343,7 @@ export default function AnimatedGradient({
       gl.deleteShader(fragmentShader);
       gl.deleteBuffer(positionBuffer);
     };
-  }, [isMounted, params]);
+  }, [isMounted, params, maxPixelRatio]);
 
   return (
     <div

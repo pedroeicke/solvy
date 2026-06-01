@@ -24,15 +24,23 @@ export default function TrustedBySection() {
     <section
       id="confianca"
       aria-labelledby="confianca-title"
-      className="relative overflow-hidden bg-bg-2 py-20 md:py-28"
+      className="relative overflow-hidden bg-bg py-20 md:py-28"
     >
-      {/* glow discreto no topo */}
+      {/* brilho azul no TOPO e na BASE da seção (costura com as vizinhas) */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-40"
+        className="pointer-events-none absolute inset-x-0 top-0 h-48"
         style={{
           background:
-            "radial-gradient(60% 100% at 50% 0%, rgba(0,167,244,0.10), transparent 70%)",
+            "radial-gradient(60% 100% at 50% 0%, rgba(0,167,244,0.16), transparent 72%)",
+        }}
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-48"
+        style={{
+          background:
+            "radial-gradient(60% 100% at 50% 100%, rgba(0,167,244,0.16), transparent 72%)",
         }}
       />
 

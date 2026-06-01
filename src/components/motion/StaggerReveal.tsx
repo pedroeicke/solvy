@@ -5,8 +5,8 @@ import { gsap, useGSAP } from "@/lib/gsap";
 
 // ============================================================
 // STAGGER REVEAL — anima os FILHOS DIRETOS em sequência (não o bloco).
-// Mesmo padrão do Reveal: immediateRender:false + scrollTrigger once,
-// pra nunca travar invisível sem JS.
+// Mesmo padrão do Reveal: immediateRender:true (esconde já no mount, sem flash)
+// + scrollTrigger once. Sem JS o "from" nunca é aplicado, então fica visível.
 // NÃO está aplicado em nenhuma seção ainda — só o primitivo.
 // ============================================================
 
@@ -47,7 +47,7 @@ export default function StaggerReveal({
           duration: 0.9,
           ease: "expo.out",
           stagger,
-          immediateRender: false,
+          immediateRender: true,
           overwrite: "auto",
           scrollTrigger: { trigger: ref.current, start, once: true },
         }

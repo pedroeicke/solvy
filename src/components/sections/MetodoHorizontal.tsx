@@ -107,29 +107,30 @@ export default function MetodoHorizontal() {
               "radial-gradient(85% 60% at 72% 28%, rgba(2,126,226,0.38), transparent 60%), radial-gradient(70% 60% at 18% 82%, rgba(7,219,220,0.20), transparent 60%), #030305",
           }}
         />
-        {/* Gradiente animado WebGL — SÓ no desktop (pesado/quebrável no mobile) */}
-        {!isMobile && (
-          <AnimatedGradient
-            style={{ zIndex: 0 }}
-            config={{
-              preset: "custom",
-              color1: "#030305",
-              color2: "#027ee2",
-              color3: "#07DBDC",
-              rotation: -50,
-              proportion: 1,
-              scale: 0.01,
-              speed: 6,
-              distortion: 0,
-              swirl: 50,
-              swirlIterations: 16,
-              softness: 47,
-              offset: -299,
-              shape: "Checks",
-              shapeSize: 45,
-            }}
-          />
-        )}
+        {/* Gradiente animado WebGL — no desktop E no mobile. No mobile vai mais
+            leve: pixel ratio limitado a 1.5 + metade das iterações de swirl
+            (8 vs 16). Fallback = base estática acima, se o WebGL cair. */}
+        <AnimatedGradient
+          style={{ zIndex: 0 }}
+          maxPixelRatio={isMobile ? 1.5 : undefined}
+          config={{
+            preset: "custom",
+            color1: "#030305",
+            color2: "#027ee2",
+            color3: "#07DBDC",
+            rotation: -50,
+            proportion: 1,
+            scale: 0.01,
+            speed: 6,
+            distortion: 0,
+            swirl: 50,
+            swirlIterations: isMobile ? 8 : 16,
+            softness: 47,
+            offset: -299,
+            shape: "Checks",
+            shapeSize: 45,
+          }}
+        />
 
         {/* escurece levemente a diagonal sup-ESQ ↔ inf-DIR */}
         <div
