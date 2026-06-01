@@ -99,22 +99,8 @@ export default function FoundersSection() {
               className="object-cover"
               style={{ objectPosition: p.imagePos }}
             />
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent"
-            />
-            {/* caixa preta com nome + descrição (igual ao desktop) */}
-            <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-black/55 p-5 backdrop-blur-md">
-              <p
-                className="font-display font-medium leading-none text-fg"
-                style={{ fontSize: "1.5rem" }}
-              >
-                {p.name}
-              </p>
-              <p className="mt-3 text-[13px] leading-relaxed text-white/80">
-                {p.work}
-              </p>
-            </div>
+            {/* foto LIMPA no mobile — sem caixa/legenda por cima (nome e cargo
+                aparecem no bloco de texto logo abaixo). */}
           </motion.div>
 
           <motion.div
