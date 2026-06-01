@@ -1,12 +1,12 @@
-import Hero from "@/components/sections/Hero";
+import Hero from "@/components/sections/HeroRoot";
 import ThesisSection from "@/components/sections/ThesisSection";
-import MetodoHorizontal from "@/components/sections/MetodoHorizontal";
 import ServicesSection from "@/components/sections/ServicesSection";
+import MetodoHorizontal from "@/components/sections/MetodoHorizontal";
+import ProcessSection from "@/components/sections/ProcessSection";
+import PortfolioSection from "@/components/sections/PortfolioSection";
 import ProofSection from "@/components/sections/ProofSection";
 import TrustedBySection from "@/components/sections/TrustedBySection";
-import ProcessSection from "@/components/sections/ProcessSection";
 import FoundersSection from "@/components/sections/FoundersSection";
-import PortfolioSection from "@/components/sections/PortfolioSection";
 import FinalCTA from "@/components/sections/FinalCTA";
 
 // Removidos do fluxo (redundância de argumento): ProjectTypesSection,
@@ -19,31 +19,32 @@ export default function Home() {
       {/* 1 — abertura */}
       <Hero />
 
-      {/* 2 — a virada conceitual */}
+      {/* 2 — a virada conceitual (cortina sobe sobre o Hero pinado: precisa
+          vir LOGO depois do Hero) */}
       <ThesisSection />
 
-      {/* 3 — princípios de como trabalhamos (redução de risco + motion) */}
-      <MetodoHorizontal />
-
-      {/* 4 — o que construímos */}
+      {/* 3 — o que construímos (o "o quê" concreto, logo após a tese) */}
       <ServicesSection />
 
-      {/* 5 — prova (Solvy em números + feedbacks na mesma seção) */}
-      <ProofSection />
+      {/* 4 — como a Solvy trabalha: princípios... */}
+      <MetodoHorizontal />
 
-      {/* 6 — quem confia (faixa de logos) */}
-      <TrustedBySection />
-
-      {/* 7 — como trabalhamos */}
+      {/* 5 — ...e o passo a passo (mesmo tema "como", agora juntos) */}
       <ProcessSection />
 
-      {/* 7 — projetos */}
+      {/* 6 — bloco de PROVA: portfólio... */}
       <PortfolioSection />
 
-      {/* 8 — sócios = redução de risco */}
+      {/* 7 — ...números... */}
+      <ProofSection />
+
+      {/* 8 — ...e quem confia (logos) */}
+      <TrustedBySection />
+
+      {/* 9 — sócios = redução de risco */}
       <FoundersSection />
 
-      {/* 9 — fechamento */}
+      {/* 10 — fechamento */}
       <FinalCTA />
     </>
   );

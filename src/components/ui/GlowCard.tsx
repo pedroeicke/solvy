@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, type CSSProperties, type ReactNode } from "react";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 // ============================================================
 // GlowCard — borda com spotlight/glow que segue o cursor.
@@ -105,7 +106,16 @@ const GLOW_STYLES = `
 let stylesInjected = false;
 
 export function GlowCard({ children, className, style }: Props) {
+  // Desliga o glow em telas PEQUENAS ou de TOQUE. Por quê: (1) o glow segue o
+  // cursor — inútil no touch; (2) o touch-action:none do card TRAVA a rolagem
+  // quando o dedo encosta; (3) os ::before/::after usam background-attachment:
+  // fixed, que repinta a cada frame e ENGASGA o scroll no mobile. Vira card liso.
+  // Usamos LARGURA *e* (hover:none): alguns emuladores/aparelhos não reportam
+  // (hover:none), mas a largura (<=767px) sempre bate no mobile.
+  const isTouch = useMediaQuery("(max-width: 767px), (hover: none)");
+
   useEffect(() => {
+    if (isTouch) return;
     if (!stylesInjected && typeof document !== "undefined") {
       if (!document.getElementById(STYLES_ID)) {
         const s = document.createElement("style");
@@ -117,7 +127,16 @@ export function GlowCard({ children, className, style }: Props) {
     }
     attachPointer();
     return () => detachPointer();
-  }, []);
+  }, [isTouch]);
+
+  // Mobile/touch: card liso, sem glow e sem touch-action:none (não trava scroll).
+  if (isTouch) {
+    return (
+      <div className={className} style={style}>
+        {children}
+      </div>
+    );
+  }
 
   // #00a7f4 ≈ hsl(199, 100%, 48%) — varia levemente no eixo X (spread 30)
   const glowVars: CSSProperties = {
@@ -141,7 +160,6 @@ export function GlowCard({ children, className, style }: Props) {
         ...glowVars,
         ...style,
         position: "relative",
-        touchAction: "none",
       }}
     >
       <div data-glow />

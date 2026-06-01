@@ -18,9 +18,189 @@
   --solvy-faint: #4c5260;
 
   --solvy-blue: #027ee2;
+  /* destaque azul claro Solvy */
   --solvy-blue-light: #00a7f4;
   --solvy-blue-deep: #014f8f;
   --solvy-glow: rgba(0, 167, 244, 0.55);
+}
+
+/* Anti-flash do F5: a seção-cortina (#virada, "Nosso movimento") tem
+   margin-top negativo (sobe sobre a Hero — efeito cortina). Antes do
+   ScrollTrigger criar o pin-spacer, essa margem faz a seção sobrepor a Hero
+   por um instante, com a logo ainda visível por cima. Fica oculta até o
+   SmoothScroll marcar <html class="solvy-ready"> após o ScrollTrigger.refresh. */
+html:not(.solvy-ready) #virada {
+  opacity: 0;
+}
+
+/* ============================================================
+   Shiny CTA — botão com "FLUXO DE LUZ": conic-gradient girando na
+   borda + shimmer interno. Portado do PS26 RJ, recolorido pro azul
+   Solvy. Classe .shiny-cta (ver ShinyButton.tsx).
+   ============================================================ */
+@property --sb-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@property --sb-percent {
+  syntax: "<percentage>";
+  initial-value: 5%;
+  inherits: false;
+}
+@property --sb-shine {
+  syntax: "<color>";
+  initial-value: white;
+  inherits: false;
+}
+
+.shiny-cta {
+  --sb-bg: #0a5cb5;
+  --sb-bg-subtle: #027ee2;
+  --sb-fg: #ffffff;
+  --sb-highlight: #00a7f4;
+  --sb-highlight-subtle: #6fcbff;
+  --sb-duration: 3s;
+  --sb-transition: 800ms cubic-bezier(0.25, 1, 0.5, 1);
+
+  isolation: isolate;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  outline-offset: 4px;
+  padding: 0.9rem 2.1rem;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 360px;
+  color: var(--sb-fg);
+  background: linear-gradient(var(--sb-bg), var(--sb-bg)) padding-box,
+    conic-gradient(
+        from var(--sb-angle),
+        transparent,
+        var(--sb-highlight) var(--sb-percent),
+        var(--sb-shine) calc(var(--sb-percent) * 2),
+        var(--sb-highlight) calc(var(--sb-percent) * 3),
+        transparent calc(var(--sb-percent) * 4)
+      )
+      border-box;
+  box-shadow: inset 0 0 0 1px var(--sb-bg-subtle),
+    0 8px 24px -8px rgba(0, 167, 244, 0.45);
+  transition: var(--sb-transition);
+  transition-property: --sb-percent, --sb-shine, box-shadow, transform;
+}
+
+.shiny-cta--sm {
+  padding: 0.6rem 1.4rem;
+  font-size: 0.85rem;
+}
+
+.shiny-cta > span {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shiny-cta::before,
+.shiny-cta::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+}
+
+.shiny-cta:active {
+  translate: 0 1px;
+}
+
+/* padrão de pontos girando (mascarado pelo ângulo) */
+.shiny-cta::before {
+  --size: calc(100% - 6px);
+  width: var(--size);
+  height: var(--size);
+  background: radial-gradient(circle at 2px 2px, white 0.5px, transparent 0)
+    padding-box;
+  background-size: 4px 4px;
+  background-repeat: space;
+  mask-image: conic-gradient(
+    from calc(var(--sb-angle) + 45deg),
+    black,
+    transparent 10% 90%,
+    black
+  );
+  border-radius: inherit;
+  opacity: 0.4;
+}
+
+/* shimmer interno (luz passando por dentro) */
+.shiny-cta::after {
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(
+    -50deg,
+    transparent,
+    var(--sb-highlight),
+    transparent
+  );
+  mask-image: radial-gradient(circle at bottom, transparent 40%, black);
+  opacity: 0.5;
+  animation: sb-shimmer var(--sb-duration) linear infinite;
+}
+
+.shiny-cta,
+.shiny-cta::before {
+  animation: sb-angle var(--sb-duration) linear infinite;
+}
+
+.shiny-cta:is(:hover, :focus-visible) {
+  --sb-percent: 18%;
+  --sb-shine: var(--sb-highlight-subtle);
+  box-shadow: inset 0 0 0 1px var(--sb-bg-subtle),
+    0 12px 36px -8px rgba(0, 167, 244, 0.65);
+}
+
+@keyframes sb-angle {
+  to {
+    --sb-angle: 360deg;
+  }
+}
+@keyframes sb-shimmer {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shiny-cta,
+  .shiny-cta::before,
+  .shiny-cta::after {
+    animation: none;
+  }
+}
+
+/* MOBILE/TOUCH: o conic-gradient animado repinta todo frame e ENGASGA o
+   scroll. Em telas de toque o botão vira sólido (azul + borda + sombra
+   estática), sem animação e sem os pseudo-elementos. Desktop fica intacto. */
+@media (hover: none) {
+  .shiny-cta {
+    background: var(--sb-bg);
+    border-color: rgba(0, 167, 244, 0.4);
+    animation: none;
+  }
+  .shiny-cta::before,
+  .shiny-cta::after {
+    display: none;
+    animation: none;
+  }
 }
 
 @theme inline {
@@ -43,7 +223,7 @@
 
   /* Display gigante mas peso medio (estilo WebHub headline) */
   --text-mega: clamp(2.75rem, 8vw, 8.5rem);
-  --text-giant: clamp(2.25rem, 5.5vw, 5.5rem);
+  --text-giant: clamp(1.75rem, 3vw, 2.75rem); /* título de seção padrão ~44px */
   --text-huge: clamp(1.75rem, 3.6vw, 3.25rem);
   --text-lead: clamp(1.05rem, 1.4vw, 1.35rem);
 

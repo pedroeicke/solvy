@@ -81,6 +81,42 @@ export default function FoundersSection() {
             <SpinningEmblem spin={!reduce} />
           </div>
 
+          {/* FOTO (MOBILE) — entre o emblema e o texto. No desktop a foto fica
+              na coluna da direita (hidden md:block lá embaixo). */}
+          <motion.div
+            key={`m-${i}`}
+            initial={enter({ scale: 1.03 })}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="relative h-[58vh] w-full overflow-hidden rounded-2xl bg-bg-2 md:hidden"
+          >
+            <Image
+              src={p.image}
+              alt={`${p.name} — ${p.role}`}
+              fill
+              sizes="100vw"
+              quality={90}
+              className="object-cover"
+              style={{ objectPosition: p.imagePos }}
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent"
+            />
+            {/* caixa preta com nome + descrição (igual ao desktop) */}
+            <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-black/55 p-5 backdrop-blur-md">
+              <p
+                className="font-display font-medium leading-none text-fg"
+                style={{ fontSize: "1.5rem" }}
+              >
+                {p.name}
+              </p>
+              <p className="mt-3 text-[13px] leading-relaxed text-white/80">
+                {p.work}
+              </p>
+            </div>
+          </motion.div>
+
           <motion.div
             key={i}
             initial={enter({ y: 16 })}
@@ -150,8 +186,9 @@ export default function FoundersSection() {
           </div>
         </div>
 
-        {/* DIREITA — foto full-bleed + card */}
-        <div className="relative h-[70vh] w-full overflow-hidden rounded-none bg-bg-2 md:h-full md:w-1/2 md:rounded-l-3xl">
+        {/* DIREITA — foto full-bleed + card (SÓ desktop; no mobile a foto sobe
+            pro fluxo da coluna esquerda, entre o emblema e o texto) */}
+        <div className="relative hidden h-[70vh] w-full overflow-hidden rounded-none bg-bg-2 md:block md:h-full md:w-1/2 md:rounded-l-3xl">
           <motion.div
             key={i}
             initial={enter({ scale: 1.04 })}
@@ -165,7 +202,8 @@ export default function FoundersSection() {
               fill
               sizes="(min-width: 768px) 50vw, 100vw"
               quality={90}
-              className="object-cover object-top"
+              className="object-cover"
+              style={{ objectPosition: p.imagePos }}
               priority={i === 0}
             />
             <div
@@ -177,11 +215,11 @@ export default function FoundersSection() {
             <div className="absolute inset-x-5 bottom-5 rounded-2xl bg-black/55 p-5 backdrop-blur-md md:inset-x-auto md:bottom-8 md:left-8 md:w-[560px] md:max-w-[calc(100%-4rem)] md:p-6">
               <p
                 className="font-display font-medium leading-none text-fg"
-                style={{ fontSize: "clamp(1.6rem, 2.6vw, 2.5rem)" }}
+                style={{ fontSize: "clamp(1.35rem, 2.2vw, 2.05rem)" }}
               >
                 {p.name}
               </p>
-              <p className="mt-3 text-sm leading-relaxed text-white/80 md:text-base">
+              <p className="mt-3 text-[13px] leading-relaxed text-white/80 md:text-sm">
                 {p.work}
               </p>
             </div>

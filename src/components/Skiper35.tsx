@@ -99,45 +99,71 @@ export default function Skiper35({
         </div>
       </div>
 
-      {/* MOBILE / TOUCH — stack */}
-      <div className="grid grid-cols-1 gap-4 px-6 md:hidden">
-        {items.map((item) => (
-          <a
-            key={item.name}
-            href={item.href || undefined}
-            aria-label={`${item.name} — ${item.role}`}
-            className="relative block h-56 overflow-hidden rounded-2xl border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-light"
-          >
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{
-                backgroundImage: `url("${item.src}")`,
-                backgroundColor: "#0a4a86",
-              }}
-            />
-            <div aria-hidden className="absolute inset-0 bg-bg/50" />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3"
-              style={{
-                background:
-                  "linear-gradient(to top, rgba(3,3,5,0.92), transparent)",
-              }}
-            />
-            <div className="absolute inset-0 flex flex-col justify-end p-5">
-              <p className="mb-1.5 text-xs uppercase tracking-widest text-blue-light">
-                {item.role}
-              </p>
-              <h3 className="display-tight text-xl font-medium text-fg">
-                {item.name}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                {item.description}
-              </p>
-            </div>
-          </a>
-        ))}
-      </div>
+      {/* MOBILE / TOUCH — lista com a imagem que EXPANDE no item ativo
+          (tap no nome abre/troca). Inativos ficam só com o nome esmaecido. */}
+      <ul className="px-6 md:hidden">
+        {items.map((item, i) => {
+          const on = active === i;
+          return (
+            <li
+              key={item.name}
+              className="border-b border-line first:border-t"
+            >
+              {/* imagem do case — expande quando ativo */}
+              <div
+                className="overflow-hidden transition-all duration-500 ease-out"
+                style={{ maxHeight: on ? 420 : 0, opacity: on ? 1 : 0 }}
+              >
+                {item.href ? (
+                  <a
+                    href={item.href}
+                    aria-label={`${item.name} — abrir projeto`}
+                    className="mt-5 block overflow-hidden rounded-2xl border border-line"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.src}
+                      alt={item.alt || item.name}
+                      className="h-[280px] w-full object-cover object-top"
+                    />
+                  </a>
+                ) : (
+                  <div className="mt-5 overflow-hidden rounded-2xl border border-line">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.src}
+                      alt={item.alt || item.name}
+                      className="h-[280px] w-full object-cover object-top"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* nome (toggle) + categoria quando ativo */}
+              <button
+                type="button"
+                onClick={() => setActive(on ? -1 : i)}
+                aria-expanded={on}
+                className="block w-full cursor-pointer py-5 text-left"
+              >
+                <h3
+                  className="display-tight text-[1.7rem] font-medium leading-tight tracking-tight transition-colors duration-300"
+                  style={{
+                    color: on ? "var(--solvy-fg)" : "rgba(247,249,252,0.32)",
+                  }}
+                >
+                  {item.name}
+                </h3>
+                {on && (
+                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-blue-light">
+                    {item.role}
+                  </p>
+                )}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
     </>
   );
 }

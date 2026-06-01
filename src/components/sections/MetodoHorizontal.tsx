@@ -12,8 +12,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { content } from "@/content";
-import Magnet from "@/components/motion/Magnet";
 import GlowCard from "@/components/ui/GlowCard";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 // ============================================================
 // MÉTODO — "Como a Solvy trabalha". Reaproveita metodo.principios num
@@ -54,7 +54,7 @@ function FeatureCard({
       } ${className}`}
     >
       <span
-        className={`mb-5 grid h-14 w-14 place-items-center rounded-full ${
+        className={`mb-5 grid h-14 w-14 shrink-0 place-items-center rounded-full ${
           highlight
             ? "bg-blue/10 text-blue"
             : "bg-gradient-to-br from-blue to-blue-deep text-white"
@@ -80,6 +80,7 @@ export default function MetodoHorizontal() {
   const { metodo } = content;
   const p = metodo.principios;
   const reduce = useReducedMotion();
+  const isMobile = useMediaQuery("(max-width: 767px)");
 
   const reveal = (i: number) => ({
     initial: reduce ? false : { opacity: 0, y: 24 },
@@ -98,28 +99,37 @@ export default function MetodoHorizontal() {
           cores do Solvy + azul piscina. A diagonal sup-ESQ ↔ inf-DIR é
           escurecida e o topo/base protegidos pra legibilidade. */}
       <div aria-hidden className="absolute inset-0">
-        {/* Gradiente animado WebGL (preset Prism) com as cores do Solvy,
-            bem devagar. zIndex 0 = acima do bg da seção. */}
-        <AnimatedGradient
-          style={{ zIndex: 0 }}
-          config={{
-            preset: "custom",
-            color1: "#030305",
-            color2: "#027ee2",
-            color3: "#07DBDC",
-            rotation: -50,
-            proportion: 1,
-            scale: 0.01,
-            speed: 6,
-            distortion: 0,
-            swirl: 50,
-            swirlIterations: 16,
-            softness: 47,
-            offset: -299,
-            shape: "Checks",
-            shapeSize: 45,
+        {/* base estática (sempre): fallback do mobile + base do desktop */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(85% 60% at 72% 28%, rgba(2,126,226,0.38), transparent 60%), radial-gradient(70% 60% at 18% 82%, rgba(7,219,220,0.20), transparent 60%), #030305",
           }}
         />
+        {/* Gradiente animado WebGL — SÓ no desktop (pesado/quebrável no mobile) */}
+        {!isMobile && (
+          <AnimatedGradient
+            style={{ zIndex: 0 }}
+            config={{
+              preset: "custom",
+              color1: "#030305",
+              color2: "#027ee2",
+              color3: "#07DBDC",
+              rotation: -50,
+              proportion: 1,
+              scale: 0.01,
+              speed: 6,
+              distortion: 0,
+              swirl: 50,
+              swirlIterations: 16,
+              softness: 47,
+              offset: -299,
+              shape: "Checks",
+              shapeSize: 45,
+            }}
+          />
+        )}
 
         {/* escurece levemente a diagonal sup-ESQ ↔ inf-DIR */}
         <div
@@ -140,12 +150,12 @@ export default function MetodoHorizontal() {
       </div>
 
       <div className="relative mx-auto max-w-[1420px] px-6 py-20 md:px-10 md:py-28">
-        {/* HEADER sobreposto — título grande light + seta */}
-        <div className="flex items-center justify-end gap-4">
-          <h2 className="display-tight text-right text-[clamp(2.25rem,6vw,5rem)] font-light leading-[0.95] tracking-tight text-fg">
-            Como a Solvy
-          </h2>
-          <Magnet data-cursor="hover">
+        {/* HEADER DESKTOP (composição editorial original — md+, INTOCADO) */}
+        <div className="hidden md:block">
+          <div className="flex items-center justify-end gap-4">
+            <h2 className="display-tight text-right text-[clamp(2.25rem,6vw,5rem)] font-light leading-[0.95] tracking-tight text-fg">
+              Como a Solvy
+            </h2>
             <a
               href="#contato"
               aria-label={metodo.cta}
@@ -153,27 +163,57 @@ export default function MetodoHorizontal() {
             >
               <ArrowUpRight className="h-6 w-6" strokeWidth={1.75} />
             </a>
-          </Magnet>
+          </div>
+
+          <div className="mt-4 flex items-center gap-6">
+            <span className="text-right text-[20px] font-semibold uppercase leading-tight tracking-[0.2em] text-blue-light/80">
+              Menos
+              <br />
+              intermediário
+              <br />
+              Sob medida
+            </span>
+            <h3 className="display-tight text-[clamp(2rem,7vw,6rem)] font-light leading-[0.9] tracking-tight text-fg">
+              trabalha
+            </h3>
+          </div>
         </div>
 
-        <div className="mt-4 flex items-center gap-6">
-          <span className="text-right text-[20px] font-semibold uppercase leading-tight tracking-[0.2em] text-blue-light/80">
-            Menos
-            <br />
-            intermediário
-            <br />
-            Sob medida
-          </span>
-          <h3 className="display-tight text-[clamp(2rem,7vw,6rem)] font-light leading-[0.9] tracking-tight text-fg">
-            trabalha.
-          </h3>
+        {/* HEADER MOBILE — editorial igual ref "AI CREATORS": "Como a Solvy" +
+            seta (centralizada) no topo; eyebrow JUSTIFICADO À DIREITA + "trabalha"
+            embaixo. */}
+        <div className="md:hidden">
+          <div className="flex items-center justify-between gap-3 pr-[6%]">
+            <h2 className="display-tight text-[clamp(2rem,9.5vw,2.6rem)] font-light leading-[1] tracking-tight text-fg">
+              Como a Solvy
+            </h2>
+            <a
+              href="#contato"
+              aria-label={metodo.cta}
+              className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/25 text-fg backdrop-blur-sm"
+            >
+              <ArrowUpRight className="h-5 w-5" strokeWidth={1.5} />
+            </a>
+          </div>
+          <div className="mt-3 flex items-center gap-3 pr-[6%]">
+            <span className="flex-1 text-right text-[0.65rem] font-semibold uppercase leading-[1.4] tracking-[0.16em] text-blue-light/80">
+              Menos
+              <br />
+              intermediário
+              <br />
+              Sob medida
+            </span>
+            <h3 className="display-tight text-[clamp(2rem,9.5vw,2.6rem)] font-light leading-[0.95] tracking-tight text-fg">
+              trabalha
+            </h3>
+          </div>
         </div>
 
         {/* GRID 4×2 — mesma montagem da referência "Comunidade":
             col1 = badge (pill) + imagem coladas no rodapé · col2 = 2 cards
             empilhados · col3 = card BRANCO só na linha de cima (resto respira
             o fundo) · col4 = card alto ocupando as 2 linhas */}
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-16 lg:grid-cols-[repeat(4,317px)] lg:grid-rows-[232px_232px] lg:justify-center">
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:mt-16 lg:grid-cols-[repeat(4,317px)] lg:grid-rows-[minmax(232px,auto)_minmax(232px,auto)] lg:justify-center">
           {/* col1 — pill "Sob medida" centralizada (acima) + tile de imagem */}
           <motion.div
             {...reveal(0)}
@@ -182,17 +222,13 @@ export default function MetodoHorizontal() {
             <span className="inline-flex h-[35px] w-[140px] items-center justify-center self-center rounded-full border border-white/30 bg-white/[0.06] text-[0.7rem] font-semibold uppercase tracking-wider text-fg backdrop-blur-md">
               Sob medida
             </span>
-            <div className="relative h-[232px] w-full overflow-hidden rounded-2xl border border-white/15">
+            <div className="relative h-[232px] w-full overflow-hidden rounded-2xl">
               <Image
-                src={p[0].image}
+                src="/igmmedida.png"
                 alt=""
                 fill
                 sizes="(min-width:1024px) 25vw, 100vw"
                 className="object-cover"
-              />
-              <div
-                aria-hidden
-                className="absolute inset-0 bg-gradient-to-t from-bg/70 to-transparent"
               />
             </div>
           </motion.div>

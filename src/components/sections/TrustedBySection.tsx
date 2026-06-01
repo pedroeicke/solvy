@@ -42,7 +42,7 @@ export default function TrustedBySection() {
         </p>
         <h2
           id="confianca-title"
-          className="display-tight mx-auto mt-4 max-w-3xl text-[clamp(1.6rem,3.2vw,2.75rem)] text-fg"
+          className="display-tight mx-auto mt-4 max-w-3xl text-[1.45rem] leading-[1.2] sm:text-giant sm:leading-[1.08] text-fg"
         >
           {trusted.title}
         </h2>

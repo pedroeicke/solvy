@@ -29,7 +29,7 @@ export default function ThesisSection() {
     <section
       id="virada"
       aria-labelledby="virada-title"
-      className="relative z-10 mt-[calc(var(--overlap)*-1)] overflow-hidden bg-bg py-24 md:py-36 [--overlap:90vh]"
+      className="relative z-10 mt-[calc(var(--overlap)*-1)] overflow-hidden bg-bg py-24 md:py-36 [--overlap:0vh] md:[--overlap:90vh]"
     >
       {/* glow sutil de fundo */}
       <div
@@ -80,7 +80,7 @@ export default function ThesisSection() {
 
         {/* body curto, centralizado */}
         <Reveal delay={0.12}>
-          <p className="mx-auto mt-8 max-w-2xl text-center text-base leading-relaxed text-muted md:text-lg">
+          <p className="mx-auto mt-8 max-w-2xl text-center text-lead leading-relaxed text-muted">
             {thesis.body}
           </p>
         </Reveal>

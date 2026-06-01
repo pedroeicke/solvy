@@ -165,12 +165,21 @@ function PhaseGroup({
         isLast ? "md:py-[12vh]" : "md:min-h-[78vh] md:py-0"
       }`}
     >
-      {/* cabeçalho da fase — só mobile (no desktop a esquerda mostra) */}
-      <div className="mb-8 flex items-baseline gap-4 md:hidden">
-        <span className="font-mono text-sm tabular-nums text-blue-light/70">
-          {movement.n}
-        </span>
-        <h3 className="display-tight text-3xl text-fg">{movement.key}</h3>
+      {/* cabeçalho da fase — só mobile: "capítulo" SEM número (a régua + nome
+          grande já marcam) + o lead do movimento. Assim só os PASSOS numeram
+          (01→06), sem dois sistemas de número se atropelando. No desktop esse
+          contexto fica na coluna sticky. */}
+      <div className="mb-7 md:hidden">
+        <span
+          aria-hidden
+          className="block h-px w-full bg-gradient-to-r from-blue-light/50 to-transparent"
+        />
+        <h3 className="display-tight mt-4 text-[2rem] leading-[1.05] text-fg">
+          {movement.key}
+        </h3>
+        <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">
+          {movement.lead}
+        </p>
       </div>
 
       <div>
@@ -182,7 +191,7 @@ function PhaseGroup({
                   {s.n}
                 </span>
                 <div className="min-w-0">
-                  <h4 className="display-tight text-2xl text-fg md:text-[1.75rem]">
+                  <h4 className="display-tight text-xl text-fg md:text-[1.75rem]">
                     {s.name}
                   </h4>
                   <p className="mt-2.5 max-w-md leading-relaxed text-muted">
@@ -286,7 +295,7 @@ export default function ProcessSection() {
           </h2>
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted md:text-lg">
+          <p className="mt-6 max-w-2xl text-lead leading-relaxed text-muted">
             {process.intro}
           </p>
         </Reveal>

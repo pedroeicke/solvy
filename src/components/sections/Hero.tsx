@@ -124,12 +124,19 @@ export default function Hero() {
 
       const handleVideoEnd = () => {
         if (!video) return;
+        // GUARD: só revela a cena de parallax se o vídeo REALMENTE tocou (i.e.,
+        // o usuário rolou até a faixa do vídeo). Um "ended" espúrio (vídeo que
+        // falha/carrega vazio) com o usuário no topo NÃO pode mostrar a
+        // cachoeira na abertura do site.
+        if (!videoStartedRef.current) {
+          resetVideo();
+          return;
+        }
         videoEndedRef.current = true;
         showText();
-        const st = scrollTriggerRef.current;
-        if (st && window.scrollY < st.end) {
-          st.scroll(st.end);
-        }
+        // NÃO auto-scrolla. O vídeo acaba, mostra a cena da montanha no lugar
+        // (parallax), e a subida do "Nosso Movimento" fica 100% por conta do
+        // scroll do usuário.
         gsap.to(sceneRef.current, {
           opacity: 1,
           duration: 0.65,
@@ -350,8 +357,10 @@ export default function Hero() {
         />
       </div>
 
-      {/* Z-10: Cena parallax (HeroIdle - stub por enquanto) */}
-      <div ref={sceneRef} className="absolute inset-0 z-10">
+      {/* Z-10: Cena parallax (HeroIdle). opacity:0 no HTML evita o "flash" da
+          cachoeira antes do GSAP rodar (FOUC na hidratação). O GSAP só revela
+          ela no fim do vídeo. */}
+      <div ref={sceneRef} className="absolute inset-0 z-10" style={{ opacity: 0 }}>
         <HeroIdle />
       </div>
 
@@ -390,14 +399,22 @@ export default function Hero() {
           <h1
             ref={frase1Ref}
             className="display font-display text-[clamp(2rem,5.5vw,4.5rem)] text-fg leading-[1.05]"
-            style={{ opacity: 0 }}
+            style={{
+              opacity: 0,
+              textShadow:
+                "0 2px 22px rgba(0,0,0,0.6), 0 1px 4px rgba(0,0,0,0.7)",
+            }}
           >
             O software se adapta à sua operação.
           </h1>
           <h1
             ref={frase2Ref}
             className="display font-display text-[clamp(2rem,5.5vw,4.5rem)] text-fg leading-[1.05] mt-4"
-            style={{ opacity: 0 }}
+            style={{
+              opacity: 0,
+              textShadow:
+                "0 2px 22px rgba(0,0,0,0.6), 0 1px 4px rgba(0,0,0,0.7)",
+            }}
           >
             Não o{" "}
             <span
@@ -408,6 +425,7 @@ export default function Hero() {
                 backgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 color: "transparent",
+                textShadow: "none",
               }}
             >
               contrário

@@ -20,6 +20,9 @@ function Sync() {
     if (!lenis) return;
     lenis.scrollTo(0, { immediate: true });
     ScrollTrigger.refresh();
+    // Pin-spacer já criado (useGSAP da Hero roda em layout-effect, antes deste
+    // passive-effect) → libera a seção-cortina sem risco de sobreposição.
+    document.documentElement.classList.add("solvy-ready");
     const onResize = () => ScrollTrigger.refresh();
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);

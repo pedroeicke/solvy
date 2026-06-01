@@ -28,19 +28,19 @@ const PHONE_SCREEN_BG =
 // Card pequeno (passa por cima do phone nas marquees).
 function TestimonialCard({ name, role, quote }: Item) {
   return (
-    <GlowCard className="flex h-[180px] w-[300px] shrink-0 flex-col gap-3 rounded-2xl border border-white/20 bg-white/[0.1] p-4 backdrop-blur-xl sm:w-[360px] sm:p-5">
-      <div className="flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue/40 text-sm font-bold text-white ring-1 ring-blue-light/50">
+    <GlowCard className="flex h-[150px] w-[228px] shrink-0 flex-col gap-2.5 rounded-2xl border border-white/20 bg-white/[0.1] p-3.5 backdrop-blur-xl sm:h-[180px] sm:w-[360px] sm:gap-3 sm:p-5">
+      <div className="flex items-center gap-2.5 sm:gap-3">
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-blue/40 text-xs font-bold text-white ring-1 ring-blue-light/50 sm:h-10 sm:w-10 sm:text-sm">
           {initials(name)}
         </span>
         <span className="min-w-0">
-          <span className="block truncate text-[15px] font-semibold text-white">
+          <span className="block truncate text-[13px] font-semibold text-white sm:text-[15px]">
             {name}
           </span>
-          <span className="block truncate text-xs text-white/70">{role}</span>
+          <span className="block truncate text-[11px] text-white/70 sm:text-xs">{role}</span>
         </span>
       </div>
-      <blockquote className="line-clamp-4 text-sm leading-relaxed text-white/90">
+      <blockquote className="line-clamp-3 text-[12.5px] leading-relaxed text-white/90 sm:line-clamp-4 sm:text-sm">
         “{quote}”
       </blockquote>
     </GlowCard>
@@ -82,7 +82,7 @@ function PhoneMockup() {
       <div className="relative h-full w-full rounded-[72px] border-[10px] border-[#0a0a22] bg-[#0a0a22]">
         {/* Tela */}
         <div
-          className="relative h-full w-full overflow-hidden rounded-[60px] px-7 pt-16"
+          className="relative h-full w-full overflow-hidden rounded-[60px] px-6 pt-12 sm:px-7 sm:pt-16"
           style={{ background: PHONE_SCREEN_BG }}
         >
           {/* Dynamic Island */}
@@ -93,19 +93,19 @@ function PhoneMockup() {
 
           {/* Conteúdo da tela: badge + título + subtítulo */}
           <div className="relative z-10 flex flex-col items-center text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-3.5 py-1.5 backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-3 py-1 backdrop-blur-md sm:px-3.5 sm:py-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-white" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-white">
+              <span className="text-[9.5px] font-bold uppercase tracking-[0.22em] text-white sm:text-[11px]">
                 Depoimentos
               </span>
             </div>
 
-            <h3 className="mt-8 text-[28px] font-extrabold leading-[1.05] text-white">
+            <h3 className="mt-6 text-[21px] font-extrabold leading-[1.05] text-white sm:mt-8 sm:text-[28px]">
               O QUE OS CLIENTES
               <br />
               DIZEM DA SOLVY
             </h3>
-            <p className="mt-3 text-[13px] text-white/85">
+            <p className="mt-2.5 text-[11px] text-white/85 sm:mt-3 sm:text-[13px]">
               Relatos de quem já construiu com a gente
             </p>
           </div>
@@ -156,7 +156,7 @@ export default function TestimonialsBlock() {
         <Reveal delay={0.05}>
           <h2
             id="depoimentos-title"
-            className="display-tight mx-auto mt-6 max-w-3xl text-[clamp(1.8rem,4vw,3.25rem)] leading-[1.05] tracking-[-0.02em] text-fg"
+            className="display-tight mx-auto mt-6 max-w-3xl text-giant leading-[1.05] tracking-[-0.02em] text-fg"
           >
             {testimonials.title}
           </h2>
@@ -173,8 +173,7 @@ export default function TestimonialsBlock() {
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 z-10 flex flex-col gap-5"
-          style={{ top: "40%" }}
+          className="pointer-events-none absolute inset-x-0 top-[36%] z-10 flex flex-col gap-5 md:top-[40%]"
         >
           <MarqueeRow items={row1} direction="left" duration={50} />
           <MarqueeRow items={row2} direction="right" duration={60} />

@@ -44,7 +44,7 @@ export default function GlassIcon({
   const clip = `url(#${clipId})`;
 
   return (
-    <div className="glass-float relative grid place-items-center">
+    <div className="relative grid place-items-center">
       {/* clipPath do hexágono arredondado (escala com a placa) */}
       <svg
         aria-hidden
@@ -128,16 +128,6 @@ export default function GlassIcon({
         <Glyph i={i} />
       </div>
 
-      <style>{`
-        .glass-float{ animation: glassfloat 7s ease-in-out infinite; }
-        @keyframes glassfloat{
-          0%,100%{ transform: translateY(-8px) rotate(-1deg); }
-          50%{ transform: translateY(8px) rotate(1deg); }
-        }
-        @media (prefers-reduced-motion: reduce){
-          .glass-float{ animation: none; }
-        }
-      `}</style>
     </div>
   );
 }
