@@ -174,6 +174,10 @@ export default function Footer() {
         {/* crédito — faixa PRETA no fim (como antes), abaixo do glass */}
         <div className="border-t border-line bg-bg py-4 text-center text-xs text-fg">
           © {new Date().getFullYear()} Solvy.
+          <span className="mx-2 text-fg/40" aria-hidden="true">·</span>
+          <a href="/privacidade" className="underline-offset-4 transition-colors hover:text-blue-light hover:underline">
+            Política de Privacidade
+          </a>
         </div>
       </div>
     </footer>
