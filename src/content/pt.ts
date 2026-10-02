@@ -19,10 +19,10 @@ export const pt = {
 
   header: {
     nav: [
-      { label: "O que fazemos", href: "#servicos" },
-      { label: "Como trabalhamos", href: "#metodo" },
-      { label: "Projetos", href: "#portfolio" },
-      { label: "Quem somos", href: "#socios" },
+      { label: "O que fazemos", href: "/#servicos" },
+      { label: "Como trabalhamos", href: "/#metodo" },
+      { label: "Projetos", href: "/#portfolio" },
+      { label: "Quem somos", href: "/#socios" },
     ],
     cta: "Falar sobre meu projeto",
   },

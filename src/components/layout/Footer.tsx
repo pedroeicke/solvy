@@ -116,7 +116,7 @@ export default function Footer() {
             </a>
           ))}
           <a
-            href="#contato"
+            href="/#contato"
             className="text-[20px] uppercase tracking-[0.1em] text-fg transition-colors hover:text-blue-light"
           >
             {header.cta}

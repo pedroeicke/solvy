@@ -53,7 +53,7 @@ export default function Header() {
         >
           {/* LOGO */}
           <a
-            href="#top"
+            href="/#top"
             aria-label="Solvy"
             className="flex shrink-0 items-center"
             onClick={() => setOpen(false)}
@@ -83,7 +83,7 @@ export default function Header() {
 
           {/* DESKTOP — CTA sempre visível */}
           <div className="hidden md:block">
-            <ShinyButton href="#contato" className="shiny-cta--sm">
+            <ShinyButton href="/#contato" className="shiny-cta--sm">
               {cta}
             </ShinyButton>
           </div>
@@ -157,7 +157,7 @@ export default function Header() {
               className="px-7 pb-12"
             >
               <ShinyButton
-                href="#contato"
+                href="/#contato"
                 className="w-full"
                 onClick={() => setOpen(false)}
               >
